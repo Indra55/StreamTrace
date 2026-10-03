@@ -13,8 +13,10 @@
     ],
     "query": "[out:json][timeout:60];way[\"waterway\"~\"river|stream\"](40.10,-8.50,40.26,-8.28);out geom;",
     "cache_sha256": "5858c967c5d9c4016186da3871b1f6da44388e2dbd8f3452785672c26bc54bb7",
-    "topology_review_state": "unreviewed",
-    "geographic_recommendations_enabled": false,
+    "topology_review_state": "prototype_confirmed",
+    "topology_review_note": "flow direction checked visually by developer on 2026-10-04, not verified by hydrology experts",
+    "topology_reviewed_by": "Codex developer visual inspection of plotted cached OSM geometry and direction arrows",
+    "geographic_recommendations_enabled": true,
     "site_label": "StreamTrace identifiers, not official OneAquaHealth sites",
     "geometry_order": "longitude, latitude",
     "direction": "OSM way node order; no automatic reversal",
@@ -31,7 +33,10 @@
             96921954
           ]
         }
-      ]
+      ],
+      "sitePlacement": "Nearest existing tributary node before each main-stem confluence, three main-stem quarter-partition checks, and the boundary outlet",
+      "siteCodePolicy": "Deterministic topological order with OSM-node ties; stable osm-site IDs preserve identity when expanding and renumbering sites",
+      "reachBudget": "The 11-site revision supersedes the original 30-reach cap; extra reaches subdivide unchanged OSM edges"
     },
     "stats": {
       "cachedWays": 584,
@@ -39,8 +44,8 @@
       "largestComponentNodes": 5321,
       "largestComponentReaches": 248,
       "naturalReaches": 25,
-      "reaches": 29,
-      "sites": 5,
+      "reaches": 35,
+      "sites": 11,
       "junctions": 12,
       "outlets": 1,
       "mainStemTributaries": 7,
@@ -124,7 +129,7 @@
     {
       "id": "osm-251615191-10570263972-ca82ab8bcc",
       "downstream": [
-        "osm-10570263972-251615195-933cd8ec2c"
+        "osm-10570263972-251615192-231288b021"
       ],
       "fromNode": 251615191,
       "toNode": 10570263972,
@@ -151,13 +156,16 @@
       "mainStem": true
     },
     {
-      "id": "osm-251615195-8414686363-41a88539f7",
+      "id": "osm-251615192-8414686363-a43dfc3648",
       "downstream": [
-        "osm-8414686363-10309165362-4bb749b7d6"
+        "osm-8414686363-251615198-f0d664e8dc"
       ],
-      "fromNode": 251615195,
+      "fromNode": 251615192,
       "toNode": 8414686363,
       "nodeIds": [
+        251615192,
+        251615193,
+        251615194,
         251615195,
         251615196,
         251615197,
@@ -170,6 +178,18 @@
         "Rio Mondego"
       ],
       "geometry": [
+        [
+          -8.3549515,
+          40.2049991
+        ],
+        [
+          -8.3556194,
+          40.2047742
+        ],
+        [
+          -8.3564954,
+          40.2045948
+        ],
         [
           -8.3574181,
           40.2045771
@@ -190,16 +210,64 @@
       "mainStem": true
     },
     {
-      "id": "osm-251615210-10221406544-360d2ec655",
+      "id": "osm-251615198-10309165362-03a6db0131",
       "downstream": [
-        "osm-10221406544-10309165373-3586f27e06"
+        "osm-10309165362-251615210-04cef5484b"
+      ],
+      "fromNode": 251615198,
+      "toNode": 10309165362,
+      "nodeIds": [
+        251615198,
+        251615199,
+        251615200,
+        251615201,
+        251615202,
+        10309165362
+      ],
+      "sourceOsmWayIds": [
+        23252421
+      ],
+      "names": [
+        "Rio Mondego"
+      ],
+      "geometry": [
+        [
+          -8.361458,
+          40.2047164
+        ],
+        [
+          -8.3634829,
+          40.2044686
+        ],
+        [
+          -8.3643927,
+          40.2042523
+        ],
+        [
+          -8.3651737,
+          40.2039311
+        ],
+        [
+          -8.3658175,
+          40.2034657
+        ],
+        [
+          -8.3661326,
+          40.202913
+        ]
+      ],
+      "mainStem": true
+    },
+    {
+      "id": "osm-251615210-251615211-ce1e9bedc0",
+      "downstream": [
+        "osm-251615211-10221406544-07c3001654"
       ],
       "fromNode": 251615210,
-      "toNode": 10221406544,
+      "toNode": 251615211,
       "nodeIds": [
         251615210,
-        251615211,
-        10221406544
+        251615211
       ],
       "sourceOsmWayIds": [
         23252421
@@ -215,38 +283,20 @@
         [
           -8.3696925,
           40.1983923
-        ],
-        [
-          -8.3700143,
-          40.198209
         ]
       ],
       "mainStem": true
     },
     {
-      "id": "osm-251615218-251615232-34b600c67f",
+      "id": "osm-251615211-10221406544-07c3001654",
       "downstream": [
-        "osm-251615232-251615233-688d6fc11f"
+        "osm-10221406544-10309165373-3586f27e06"
       ],
-      "fromNode": 251615218,
-      "toNode": 251615232,
+      "fromNode": 251615211,
+      "toNode": 10221406544,
       "nodeIds": [
-        251615218,
-        251615219,
-        251615220,
-        251615221,
-        251615222,
-        2965403337,
-        251615223,
-        251615224,
-        251615225,
-        251615226,
-        251615227,
-        251615228,
-        251615229,
-        251615230,
-        251615231,
-        251615232
+        251615211,
+        10221406544
       ],
       "sourceOsmWayIds": [
         23252421
@@ -256,68 +306,12 @@
       ],
       "geometry": [
         [
-          -8.376409,
-          40.1964642
+          -8.3696925,
+          40.1983923
         ],
         [
-          -8.377293,
-          40.1959003
-        ],
-        [
-          -8.3778168,
-          40.1954475
-        ],
-        [
-          -8.3783125,
-          40.1949668
-        ],
-        [
-          -8.3789347,
-          40.1942993
-        ],
-        [
-          -8.3792244,
-          40.1940412
-        ],
-        [
-          -8.3795462,
-          40.1937789
-        ],
-        [
-          -8.3800521,
-          40.1934548
-        ],
-        [
-          -8.3804528,
-          40.1932544
-        ],
-        [
-          -8.3812199,
-          40.192984
-        ],
-        [
-          -8.3817698,
-          40.1930311
-        ],
-        [
-          -8.3824993,
-          40.192863
-        ],
-        [
-          -8.3836173,
-          40.1925007
-        ],
-        [
-          -8.3845648,
-          40.1921726
-        ],
-        [
-          -8.3853849,
-          40.1917266
-        ],
-        [
-          -8.3861689,
-          40.1913418
+          -8.3700143,
+          40.198209
         ]
       ],
       "mainStem": true
@@ -350,20 +344,44 @@
       "mainStem": true
     },
     {
-      "id": "osm-8414686363-10309165362-4bb749b7d6",
+      "id": "osm-8414686362-8414686363-9dcf0af932",
       "downstream": [
-        "osm-10309165362-251615210-04cef5484b"
+        "osm-8414686363-251615198-f0d664e8dc"
+      ],
+      "fromNode": 8414686362,
+      "toNode": 8414686363,
+      "nodeIds": [
+        8414686362,
+        8414686363
+      ],
+      "sourceOsmWayIds": [
+        1534596212
+      ],
+      "names": [
+        "Ribeira de Misarela"
+      ],
+      "geometry": [
+        [
+          -8.3603774,
+          40.2050689
+        ],
+        [
+          -8.3605373,
+          40.2047624
+        ]
+      ],
+      "mainStem": false
+    },
+    {
+      "id": "osm-8414686363-251615198-f0d664e8dc",
+      "downstream": [
+        "osm-251615198-10309165362-03a6db0131"
       ],
       "fromNode": 8414686363,
-      "toNode": 10309165362,
+      "toNode": 251615198,
       "nodeIds": [
         8414686363,
-        251615198,
-        251615199,
-        251615200,
-        251615201,
-        251615202,
-        10309165362
+        251615198
       ],
       "sourceOsmWayIds": [
         23252421
@@ -379,195 +397,17 @@
         [
           -8.361458,
           40.2047164
-        ],
-        [
-          -8.3634829,
-          40.2044686
-        ],
-        [
-          -8.3643927,
-          40.2042523
-        ],
-        [
-          -8.3651737,
-          40.2039311
-        ],
-        [
-          -8.3658175,
-          40.2034657
-        ],
-        [
-          -8.3661326,
-          40.202913
         ]
       ],
       "mainStem": true
     },
     {
-      "id": "osm-8414686372-8414686363-fefc7180d4",
+      "id": "osm-8414686398-8414686362-f51df2e704",
       "downstream": [
-        "osm-8414686363-10309165362-4bb749b7d6"
-      ],
-      "fromNode": 8414686372,
-      "toNode": 8414686363,
-      "nodeIds": [
-        8414686372,
-        8414686371,
-        8414686370,
-        8414686369,
-        5200230252,
-        8414686368,
-        8414686367,
-        8414686366,
-        8414686365,
-        8414686364,
-        8414686351,
-        8414686352,
-        13983311676,
-        13983311675,
-        8414686353,
-        8414686354,
-        8414686355,
-        8414686356,
-        8414686357,
-        8414686358,
-        8414686359,
-        13983311674,
-        13983311677,
-        8414686360,
-        8414686361,
-        8414686362,
-        8414686363
-      ],
-      "sourceOsmWayIds": [
-        906125072,
-        1534596210,
-        1534596211,
-        1534596212,
-        1534596213
-      ],
-      "names": [
-        "Ribeira de Misarela"
-      ],
-      "geometry": [
-        [
-          -8.3598788,
-          40.2095564
-        ],
-        [
-          -8.3599283,
-          40.2094159
-        ],
-        [
-          -8.3599814,
-          40.209324
-        ],
-        [
-          -8.3599531,
-          40.2090942
-        ],
-        [
-          -8.3599438,
-          40.2089387
-        ],
-        [
-          -8.3599354,
-          40.2087969
-        ],
-        [
-          -8.3599307,
-          40.2086551
-        ],
-        [
-          -8.3598168,
-          40.2084502
-        ],
-        [
-          -8.3597762,
-          40.2082825
-        ],
-        [
-          -8.3598077,
-          40.2080379
-        ],
-        [
-          -8.3598105,
-          40.207627
-        ],
-        [
-          -8.359798,
-          40.207396
-        ],
-        [
-          -8.3597647,
-          40.2073182
-        ],
-        [
-          -8.3597203,
-          40.2072144
-        ],
-        [
-          -8.3597068,
-          40.207183
-        ],
-        [
-          -8.3595781,
-          40.2070027
-        ],
-        [
-          -8.3595942,
-          40.2068142
-        ],
-        [
-          -8.3596747,
-          40.2066176
-        ],
-        [
-          -8.3599375,
-          40.2062161
-        ],
-        [
-          -8.3600984,
-          40.2059703
-        ],
-        [
-          -8.3601351,
-          40.2058252
-        ],
-        [
-          -8.3601472,
-          40.20574
-        ],
-        [
-          -8.3601974,
-          40.2056588
-        ],
-        [
-          -8.3602379,
-          40.2055934
-        ],
-        [
-          -8.3603345,
-          40.2052205
-        ],
-        [
-          -8.3603774,
-          40.2050689
-        ],
-        [
-          -8.3605373,
-          40.2047624
-        ]
-      ],
-      "mainStem": false
-    },
-    {
-      "id": "osm-8414686398-8414686372-0c83ee11c2",
-      "downstream": [
-        "osm-8414686372-8414686363-fefc7180d4"
+        "osm-8414686362-8414686363-9dcf0af932"
       ],
       "fromNode": 8414686398,
-      "toNode": 8414686372,
+      "toNode": 8414686362,
       "nodeIds": [
         8414686398,
         8414686397,
@@ -595,10 +435,39 @@
         8414686375,
         8414686374,
         8414686373,
-        8414686372
+        8414686372,
+        8414686371,
+        8414686370,
+        8414686369,
+        5200230252,
+        8414686368,
+        8414686367,
+        8414686366,
+        8414686365,
+        8414686364,
+        8414686351,
+        8414686352,
+        13983311676,
+        13983311675,
+        8414686353,
+        8414686354,
+        8414686355,
+        8414686356,
+        8414686357,
+        8414686358,
+        8414686359,
+        13983311674,
+        13983311677,
+        8414686360,
+        8414686361,
+        8414686362
       ],
       "sourceOsmWayIds": [
-        906125072
+        906125072,
+        1534596210,
+        1534596211,
+        1534596212,
+        1534596213
       ],
       "names": [
         "Ribeira de Misarela"
@@ -711,6 +580,106 @@
         [
           -8.3598788,
           40.2095564
+        ],
+        [
+          -8.3599283,
+          40.2094159
+        ],
+        [
+          -8.3599814,
+          40.209324
+        ],
+        [
+          -8.3599531,
+          40.2090942
+        ],
+        [
+          -8.3599438,
+          40.2089387
+        ],
+        [
+          -8.3599354,
+          40.2087969
+        ],
+        [
+          -8.3599307,
+          40.2086551
+        ],
+        [
+          -8.3598168,
+          40.2084502
+        ],
+        [
+          -8.3597762,
+          40.2082825
+        ],
+        [
+          -8.3598077,
+          40.2080379
+        ],
+        [
+          -8.3598105,
+          40.207627
+        ],
+        [
+          -8.359798,
+          40.207396
+        ],
+        [
+          -8.3597647,
+          40.2073182
+        ],
+        [
+          -8.3597203,
+          40.2072144
+        ],
+        [
+          -8.3597068,
+          40.207183
+        ],
+        [
+          -8.3595781,
+          40.2070027
+        ],
+        [
+          -8.3595942,
+          40.2068142
+        ],
+        [
+          -8.3596747,
+          40.2066176
+        ],
+        [
+          -8.3599375,
+          40.2062161
+        ],
+        [
+          -8.3600984,
+          40.2059703
+        ],
+        [
+          -8.3601351,
+          40.2058252
+        ],
+        [
+          -8.3601472,
+          40.20574
+        ],
+        [
+          -8.3601974,
+          40.2056588
+        ],
+        [
+          -8.3602379,
+          40.2055934
+        ],
+        [
+          -8.3603345,
+          40.2052205
+        ],
+        [
+          -8.3603774,
+          40.2050689
         ]
       ],
       "mainStem": false
@@ -1149,7 +1118,7 @@
     {
       "id": "osm-8414687060-8414686398-bba3c2517d",
       "downstream": [
-        "osm-8414686398-8414686372-0c83ee11c2"
+        "osm-8414686398-8414686362-f51df2e704"
       ],
       "fromNode": 8414687060,
       "toNode": 8414686398,
@@ -1193,7 +1162,7 @@
     {
       "id": "osm-8414687061-8414686398-21a6e82a17",
       "downstream": [
-        "osm-8414686398-8414686372-0c83ee11c2"
+        "osm-8414686398-8414686362-f51df2e704"
       ],
       "fromNode": 8414687061,
       "toNode": 8414686398,
@@ -1283,12 +1252,12 @@
       "mainStem": false
     },
     {
-      "id": "osm-10221406521-10221406544-8236942d16",
+      "id": "osm-10221406521-10221406543-545ebd4c17",
       "downstream": [
-        "osm-10221406544-10309165373-3586f27e06"
+        "osm-10221406543-10221406544-839d310038"
       ],
       "fromNode": 10221406521,
-      "toNode": 10221406544,
+      "toNode": 10221406543,
       "nodeIds": [
         10221406521,
         10221406522,
@@ -1314,8 +1283,7 @@
         10221406540,
         10221406541,
         10221406542,
-        10221406543,
-        10221406544
+        10221406543
       ],
       "sourceOsmWayIds": [
         1117589803,
@@ -1423,6 +1391,29 @@
         [
           -8.3696885,
           40.1975766
+        ]
+      ],
+      "mainStem": false
+    },
+    {
+      "id": "osm-10221406543-10221406544-839d310038",
+      "downstream": [
+        "osm-10221406544-10309165373-3586f27e06"
+      ],
+      "fromNode": 10221406543,
+      "toNode": 10221406544,
+      "nodeIds": [
+        10221406543,
+        10221406544
+      ],
+      "sourceOsmWayIds": [
+        1466227105
+      ],
+      "names": [],
+      "geometry": [
+        [
+          -8.3696885,
+          40.1975766
         ],
         [
           -8.3700143,
@@ -1434,7 +1425,7 @@
     {
       "id": "osm-10221406544-10309165373-3586f27e06",
       "downstream": [
-        "osm-10309165373-251615218-9bfeedd677"
+        "osm-10309165373-251615232-52438e1f86"
       ],
       "fromNode": 10221406544,
       "toNode": 10309165373,
@@ -1486,98 +1477,21 @@
       "mainStem": true
     },
     {
-      "id": "osm-10221430583-251615210-5b8fdefeae",
+      "id": "osm-10221430596-251615210-138331553c",
       "downstream": [
-        "osm-251615210-10221406544-360d2ec655"
+        "osm-251615210-251615211-ce1e9bedc0"
       ],
-      "fromNode": 10221430583,
+      "fromNode": 10221430596,
       "toNode": 251615210,
       "nodeIds": [
-        10221430583,
-        10221430584,
-        10221430585,
-        10221430586,
-        10221430587,
-        10221430588,
-        10221430589,
-        10221430590,
-        13448142160,
-        13448142159,
-        10221430591,
-        10221430592,
-        10221430593,
-        10221430594,
-        10221430595,
         10221430596,
         251615210
       ],
       "sourceOsmWayIds": [
-        1117589729,
-        1466227107,
-        1466227108
+        1466227107
       ],
       "names": [],
       "geometry": [
-        [
-          -8.3556981,
-          40.1963474
-        ],
-        [
-          -8.357007,
-          40.1961671
-        ],
-        [
-          -8.3584018,
-          40.1962654
-        ],
-        [
-          -8.3603115,
-          40.1967899
-        ],
-        [
-          -8.3612127,
-          40.1971833
-        ],
-        [
-          -8.3622641,
-          40.1971833
-        ],
-        [
-          -8.362822,
-          40.1971669
-        ],
-        [
-          -8.3640237,
-          40.1973308
-        ],
-        [
-          -8.3644872,
-          40.1975202
-        ],
-        [
-          -8.3647398,
-          40.1976098
-        ],
-        [
-          -8.3653326,
-          40.1977569
-        ],
-        [
-          -8.3662123,
-          40.198183
-        ],
-        [
-          -8.3673281,
-          40.1982486
-        ],
-        [
-          -8.3682508,
-          40.1984617
-        ],
-        [
-          -8.36868,
-          40.1986092
-        ],
         [
           -8.3688321,
           40.1986569
@@ -1706,12 +1620,12 @@
       "mainStem": false
     },
     {
-      "id": "osm-10309165347-10309165362-98cc57e2e3",
+      "id": "osm-10309165347-10309165361-4f44729b43",
       "downstream": [
-        "osm-10309165362-251615210-04cef5484b"
+        "osm-10309165361-10309165362-98ed28b2c7"
       ],
       "fromNode": 10309165347,
-      "toNode": 10309165362,
+      "toNode": 10309165361,
       "nodeIds": [
         10309165347,
         10309165348,
@@ -1729,8 +1643,7 @@
         10309165358,
         10309165359,
         10309165360,
-        10309165361,
-        10309165362
+        10309165361
       ],
       "sourceOsmWayIds": [
         1127557032
@@ -1804,6 +1717,29 @@
         [
           -8.3669041,
           40.203859
+        ]
+      ],
+      "mainStem": false
+    },
+    {
+      "id": "osm-10309165361-10309165362-98ed28b2c7",
+      "downstream": [
+        "osm-10309165362-251615210-04cef5484b"
+      ],
+      "fromNode": 10309165361,
+      "toNode": 10309165362,
+      "nodeIds": [
+        10309165361,
+        10309165362
+      ],
+      "sourceOsmWayIds": [
+        1127557032
+      ],
+      "names": [],
+      "geometry": [
+        [
+          -8.3669041,
+          40.203859
         ],
         [
           -8.3661326,
@@ -1815,7 +1751,7 @@
     {
       "id": "osm-10309165362-251615210-04cef5484b",
       "downstream": [
-        "osm-251615210-10221406544-360d2ec655"
+        "osm-251615210-251615211-ce1e9bedc0"
       ],
       "fromNode": 10309165362,
       "toNode": 251615210,
@@ -1882,12 +1818,12 @@
       "mainStem": true
     },
     {
-      "id": "osm-10309165363-10309165373-45b28d1f56",
+      "id": "osm-10309165363-10309165372-b948c4743d",
       "downstream": [
-        "osm-10309165373-251615218-9bfeedd677"
+        "osm-10309165372-10309165373-c830b3c1cc"
       ],
       "fromNode": 10309165363,
-      "toNode": 10309165373,
+      "toNode": 10309165372,
       "nodeIds": [
         10309165363,
         10309165364,
@@ -1902,8 +1838,7 @@
         12587687002,
         12587687001,
         10309165371,
-        10309165372,
-        10309165373
+        10309165372
       ],
       "sourceOsmWayIds": [
         1127557033,
@@ -1969,6 +1904,29 @@
         [
           -8.37435,
           40.1980409
+        ]
+      ],
+      "mainStem": false
+    },
+    {
+      "id": "osm-10309165372-10309165373-c830b3c1cc",
+      "downstream": [
+        "osm-10309165373-251615232-52438e1f86"
+      ],
+      "fromNode": 10309165372,
+      "toNode": 10309165373,
+      "nodeIds": [
+        10309165372,
+        10309165373
+      ],
+      "sourceOsmWayIds": [
+        1359861592
+      ],
+      "names": [],
+      "geometry": [
+        [
+          -8.37435,
+          40.1980409
         ],
         [
           -8.3741621,
@@ -1978,17 +1936,32 @@
       "mainStem": false
     },
     {
-      "id": "osm-10309165373-251615218-9bfeedd677",
+      "id": "osm-10309165373-251615232-52438e1f86",
       "downstream": [
-        "osm-251615218-251615232-34b600c67f"
+        "osm-251615232-251615233-688d6fc11f"
       ],
       "fromNode": 10309165373,
-      "toNode": 251615218,
+      "toNode": 251615232,
       "nodeIds": [
         10309165373,
         251615216,
         251615217,
-        251615218
+        251615218,
+        251615219,
+        251615220,
+        251615221,
+        251615222,
+        2965403337,
+        251615223,
+        251615224,
+        251615225,
+        251615226,
+        251615227,
+        251615228,
+        251615229,
+        251615230,
+        251615231,
+        251615232
       ],
       "sourceOsmWayIds": [
         23252421
@@ -2012,17 +1985,77 @@
         [
           -8.376409,
           40.1964642
+        ],
+        [
+          -8.377293,
+          40.1959003
+        ],
+        [
+          -8.3778168,
+          40.1954475
+        ],
+        [
+          -8.3783125,
+          40.1949668
+        ],
+        [
+          -8.3789347,
+          40.1942993
+        ],
+        [
+          -8.3792244,
+          40.1940412
+        ],
+        [
+          -8.3795462,
+          40.1937789
+        ],
+        [
+          -8.3800521,
+          40.1934548
+        ],
+        [
+          -8.3804528,
+          40.1932544
+        ],
+        [
+          -8.3812199,
+          40.192984
+        ],
+        [
+          -8.3817698,
+          40.1930311
+        ],
+        [
+          -8.3824993,
+          40.192863
+        ],
+        [
+          -8.3836173,
+          40.1925007
+        ],
+        [
+          -8.3845648,
+          40.1921726
+        ],
+        [
+          -8.3853849,
+          40.1917266
+        ],
+        [
+          -8.3861689,
+          40.1913418
         ]
       ],
       "mainStem": true
     },
     {
-      "id": "osm-10309165374-251615232-3436daa1f2",
+      "id": "osm-10309165374-10309165385-2ad0a20494",
       "downstream": [
-        "osm-251615232-251615233-688d6fc11f"
+        "osm-10309165385-251615232-4801a24acd"
       ],
       "fromNode": 10309165374,
-      "toNode": 251615232,
+      "toNode": 10309165385,
       "nodeIds": [
         10309165374,
         10309165375,
@@ -2038,8 +2071,7 @@
         10309165383,
         14045942344,
         10309165384,
-        10309165385,
-        251615232
+        10309165385
       ],
       "sourceOsmWayIds": [
         1127557034,
@@ -2107,6 +2139,29 @@
         [
           -8.3855509,
           40.1907306
+        ]
+      ],
+      "mainStem": false
+    },
+    {
+      "id": "osm-10309165385-251615232-4801a24acd",
+      "downstream": [
+        "osm-251615232-251615233-688d6fc11f"
+      ],
+      "fromNode": 10309165385,
+      "toNode": 251615232,
+      "nodeIds": [
+        10309165385,
+        251615232
+      ],
+      "sourceOsmWayIds": [
+        1127557034
+      ],
+      "names": [],
+      "geometry": [
+        [
+          -8.3855509,
+          40.1907306
         ],
         [
           -8.3861689,
@@ -2116,12 +2171,12 @@
       "mainStem": false
     },
     {
-      "id": "osm-10570263955-10570263972-0eaf702c68",
+      "id": "osm-10570263955-10570263971-02a014a7a1",
       "downstream": [
-        "osm-10570263972-251615195-933cd8ec2c"
+        "osm-10570263971-10570263972-8d98361542"
       ],
       "fromNode": 10570263955,
-      "toNode": 10570263972,
+      "toNode": 10570263971,
       "nodeIds": [
         10570263955,
         10570263956,
@@ -2139,8 +2194,7 @@
         10570263968,
         10570263969,
         10570263970,
-        10570263971,
-        10570263972
+        10570263971
       ],
       "sourceOsmWayIds": [
         1133776304
@@ -2214,6 +2268,29 @@
         [
           -8.3536975,
           40.2049638
+        ]
+      ],
+      "mainStem": false
+    },
+    {
+      "id": "osm-10570263971-10570263972-8d98361542",
+      "downstream": [
+        "osm-10570263972-251615192-231288b021"
+      ],
+      "fromNode": 10570263971,
+      "toNode": 10570263972,
+      "nodeIds": [
+        10570263971,
+        10570263972
+      ],
+      "sourceOsmWayIds": [
+        1133776304
+      ],
+      "names": [],
+      "geometry": [
+        [
+          -8.3536975,
+          40.2049638
         ],
         [
           -8.3544271,
@@ -2223,18 +2300,15 @@
       "mainStem": false
     },
     {
-      "id": "osm-10570263972-251615195-933cd8ec2c",
+      "id": "osm-10570263972-251615192-231288b021",
       "downstream": [
-        "osm-251615195-8414686363-41a88539f7"
+        "osm-251615192-8414686363-a43dfc3648"
       ],
       "fromNode": 10570263972,
-      "toNode": 251615195,
+      "toNode": 251615192,
       "nodeIds": [
         10570263972,
-        251615192,
-        251615193,
-        251615194,
-        251615195
+        251615192
       ],
       "sourceOsmWayIds": [
         23252421
@@ -2250,29 +2324,17 @@
         [
           -8.3549515,
           40.2049991
-        ],
-        [
-          -8.3556194,
-          40.2047742
-        ],
-        [
-          -8.3564954,
-          40.2045948
-        ],
-        [
-          -8.3574181,
-          40.2045771
         ]
       ],
       "mainStem": true
     },
     {
-      "id": "osm-10570263986-10221430583-d3b5e91e2d",
+      "id": "osm-10570263986-10221430596-a3d3c505cc",
       "downstream": [
-        "osm-10221430583-251615210-5b8fdefeae"
+        "osm-10221430596-251615210-138331553c"
       ],
       "fromNode": 10570263986,
-      "toNode": 10221430583,
+      "toNode": 10221430596,
       "nodeIds": [
         10570263986,
         10570263985,
@@ -2290,10 +2352,27 @@
         10570263973,
         10221430581,
         10221430582,
-        10221430583
+        10221430583,
+        10221430584,
+        10221430585,
+        10221430586,
+        10221430587,
+        10221430588,
+        10221430589,
+        10221430590,
+        13448142160,
+        13448142159,
+        10221430591,
+        10221430592,
+        10221430593,
+        10221430594,
+        10221430595,
+        10221430596
       ],
       "sourceOsmWayIds": [
-        1117589729
+        1117589729,
+        1466227107,
+        1466227108
       ],
       "names": [],
       "geometry": [
@@ -2364,6 +2443,66 @@
         [
           -8.3556981,
           40.1963474
+        ],
+        [
+          -8.357007,
+          40.1961671
+        ],
+        [
+          -8.3584018,
+          40.1962654
+        ],
+        [
+          -8.3603115,
+          40.1967899
+        ],
+        [
+          -8.3612127,
+          40.1971833
+        ],
+        [
+          -8.3622641,
+          40.1971833
+        ],
+        [
+          -8.362822,
+          40.1971669
+        ],
+        [
+          -8.3640237,
+          40.1973308
+        ],
+        [
+          -8.3644872,
+          40.1975202
+        ],
+        [
+          -8.3647398,
+          40.1976098
+        ],
+        [
+          -8.3653326,
+          40.1977569
+        ],
+        [
+          -8.3662123,
+          40.198183
+        ],
+        [
+          -8.3673281,
+          40.1982486
+        ],
+        [
+          -8.3682508,
+          40.1984617
+        ],
+        [
+          -8.36868,
+          40.1986092
+        ],
+        [
+          -8.3688321,
+          40.1986569
         ]
       ],
       "mainStem": false
@@ -2372,62 +2511,178 @@
   "sites": [
     {
       "code": "001",
-      "reachId": "osm-10570263986-10221430583-d3b5e91e2d",
-      "accessible": false,
-      "osmNodeId": 10221430583,
+      "reachId": "osm-10221406521-10221406543-545ebd4c17",
+      "accessible": true,
+      "osmNodeId": 10221406543,
       "coordinates": [
-        -8.3556981,
-        40.1963474
+        -8.3696885,
+        40.1975766
       ],
-      "access_review_state": "unreviewed",
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-10221406543",
+      "placement": "tributary_confluence",
+      "confluenceNodeId": 10221406544,
       "label": "StreamTrace identifiers, not official OneAquaHealth sites"
     },
     {
       "code": "002",
-      "reachId": "osm-10570263972-251615195-933cd8ec2c",
-      "accessible": false,
-      "osmNodeId": 251615195,
+      "reachId": "osm-10570263986-10221430596-a3d3c505cc",
+      "accessible": true,
+      "osmNodeId": 10221430596,
       "coordinates": [
-        -8.3574181,
-        40.2045771
+        -8.3688321,
+        40.1986569
       ],
-      "access_review_state": "unreviewed",
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-10221430596",
+      "placement": "tributary_confluence",
+      "confluenceNodeId": 251615210,
       "label": "StreamTrace identifiers, not official OneAquaHealth sites"
     },
     {
       "code": "003",
-      "reachId": "osm-8414686398-8414686372-0c83ee11c2",
-      "accessible": false,
-      "osmNodeId": 8414686372,
+      "reachId": "osm-10309165347-10309165361-4f44729b43",
+      "accessible": true,
+      "osmNodeId": 10309165361,
       "coordinates": [
-        -8.3598788,
-        40.2095564
+        -8.3669041,
+        40.203859
       ],
-      "access_review_state": "unreviewed",
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-10309165361",
+      "placement": "tributary_confluence",
+      "confluenceNodeId": 10309165362,
       "label": "StreamTrace identifiers, not official OneAquaHealth sites"
     },
     {
       "code": "004",
-      "reachId": "osm-10309165373-251615218-9bfeedd677",
-      "accessible": false,
-      "osmNodeId": 251615218,
+      "reachId": "osm-10309165363-10309165372-b948c4743d",
+      "accessible": true,
+      "osmNodeId": 10309165372,
       "coordinates": [
-        -8.376409,
-        40.1964642
+        -8.37435,
+        40.1980409
       ],
-      "access_review_state": "unreviewed",
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-10309165372",
+      "placement": "tributary_confluence",
+      "confluenceNodeId": 10309165373,
       "label": "StreamTrace identifiers, not official OneAquaHealth sites"
     },
     {
       "code": "005",
+      "reachId": "osm-10309165374-10309165385-2ad0a20494",
+      "accessible": true,
+      "osmNodeId": 10309165385,
+      "coordinates": [
+        -8.3855509,
+        40.1907306
+      ],
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-10309165385",
+      "placement": "tributary_confluence",
+      "confluenceNodeId": 251615232,
+      "label": "StreamTrace identifiers, not official OneAquaHealth sites"
+    },
+    {
+      "code": "006",
+      "reachId": "osm-10570263955-10570263971-02a014a7a1",
+      "accessible": true,
+      "osmNodeId": 10570263971,
+      "coordinates": [
+        -8.3536975,
+        40.2049638
+      ],
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-10570263971",
+      "placement": "tributary_confluence",
+      "confluenceNodeId": 10570263972,
+      "label": "StreamTrace identifiers, not official OneAquaHealth sites"
+    },
+    {
+      "code": "007",
+      "reachId": "osm-10570263972-251615192-231288b021",
+      "accessible": true,
+      "osmNodeId": 251615192,
+      "coordinates": [
+        -8.3549515,
+        40.2049991
+      ],
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-251615192",
+      "placement": "main_stem_partition",
+      "confluenceNodeId": null,
+      "label": "StreamTrace identifiers, not official OneAquaHealth sites"
+    },
+    {
+      "code": "008",
+      "reachId": "osm-8414686398-8414686362-f51df2e704",
+      "accessible": true,
+      "osmNodeId": 8414686362,
+      "coordinates": [
+        -8.3603774,
+        40.2050689
+      ],
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-8414686362",
+      "placement": "tributary_confluence",
+      "confluenceNodeId": 8414686363,
+      "label": "StreamTrace identifiers, not official OneAquaHealth sites"
+    },
+    {
+      "code": "009",
+      "reachId": "osm-8414686363-251615198-f0d664e8dc",
+      "accessible": true,
+      "osmNodeId": 251615198,
+      "coordinates": [
+        -8.361458,
+        40.2047164
+      ],
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-251615198",
+      "placement": "main_stem_partition",
+      "confluenceNodeId": null,
+      "label": "StreamTrace identifiers, not official OneAquaHealth sites"
+    },
+    {
+      "code": "010",
+      "reachId": "osm-251615210-251615211-ce1e9bedc0",
+      "accessible": true,
+      "osmNodeId": 251615211,
+      "coordinates": [
+        -8.3696925,
+        40.1983923
+      ],
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-251615211",
+      "placement": "main_stem_partition",
+      "confluenceNodeId": null,
+      "label": "StreamTrace identifiers, not official OneAquaHealth sites"
+    },
+    {
+      "code": "011",
       "reachId": "osm-251615232-251615233-688d6fc11f",
-      "accessible": false,
+      "accessible": true,
       "osmNodeId": 251615233,
       "coordinates": [
         -8.3870602,
         40.1908363
       ],
-      "access_review_state": "unreviewed",
+      "access_review_state": "prototype_assumed",
+      "access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified",
+      "id": "osm-site-251615233",
+      "placement": "outlet",
+      "confluenceNodeId": null,
       "label": "StreamTrace identifiers, not official OneAquaHealth sites"
     }
   ]

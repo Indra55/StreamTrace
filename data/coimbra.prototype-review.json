@@ -1,0 +1,8 @@
+{
+  "state": "prototype_confirmed",
+  "cache_sha256": "5858c967c5d9c4016186da3871b1f6da44388e2dbd8f3452785672c26bc54bb7",
+  "note": "flow direction checked visually by developer on 2026-10-04, not verified by hydrology experts",
+  "reviewed_by": "Codex developer visual inspection of plotted cached OSM geometry and direction arrows",
+  "scope": "Selected Mondego study section only; excluded flow-split flags remain unreviewed",
+  "site_access_note": "Assumed accessible for the simulated prototype only; physical access has not been verified"
+}

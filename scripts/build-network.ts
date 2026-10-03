@@ -1,7 +1,12 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { pathToFileURL } from "node:url";
-import { compileGraph, type Reach, type Site } from "../engine/index.ts";
+import {
+  compileGraph,
+  investigate,
+  type Reach,
+  type Site,
+} from "../engine/index.ts";
 
 export interface OsmWay {
   type: string;
@@ -32,7 +37,11 @@ export interface GeoReach extends Reach {
 interface GeoSite extends Site {
   osmNodeId: number;
   coordinates: number[];
-  access_review_state: "unreviewed";
+  access_review_state: "unreviewed" | "prototype_assumed";
+  id: string;
+  placement: "tributary_confluence" | "main_stem_partition" | "outlet";
+  confluenceNodeId: number | null;
+  access_note: string;
   label: string;
 }
 const root = new URL("../", import.meta.url);
@@ -44,7 +53,26 @@ const reachId = (nodes: number[]) =>
 export const serialize = (value: unknown) =>
   JSON.stringify(value, null, 2) + "\n";
 
-export function buildNetwork(cacheText: string) {
+export interface PrototypeReview {
+  state: "prototype_confirmed";
+  cache_sha256: string;
+  note: string;
+  reviewed_by: string;
+  scope: string;
+  site_access_note: string;
+}
+export function buildNetwork(cacheText: string, review?: PrototypeReview) {
+  const cacheHash = createHash("sha256").update(cacheText).digest("hex");
+  if (
+    review &&
+    (review.state !== "prototype_confirmed" ||
+      review.cache_sha256 !== cacheHash ||
+      !review.note ||
+      !review.reviewed_by)
+  )
+    throw new Error(
+      "Prototype review must match this exact cache and include provenance",
+    );
   const cache = JSON.parse(cacheText) as Cache;
   if (cache.remark || !Array.isArray(cache.elements) || !cache.elements.length)
     throw new Error("Incomplete or empty Overpass cache");
@@ -212,20 +240,47 @@ export function buildNetwork(cacheText: string) {
     );
   }
   const natural = collapse(selectedEdges);
-  // Candidate observation locations are existing interior OSM nodes, not verified access points.
-  const branchPaths = natural
-    .filter((r) => !r.mainStem && r.nodeIds.length > 2)
-    .sort(
-      (a, b) => b.nodeIds.length - a.nodeIds.length || a.fromNode - b.fromNode,
-    );
-  const siteNodes = new Set([
-    251615195,
-    251615218,
-    end,
-    ...branchPaths
-      .slice(0, 2)
-      .map((r) => r.nodeIds[Math.floor(r.nodeIds.length / 2)]!),
-  ]);
+  // The nearest existing branch node before each main-stem confluence is an
+  // observation boundary. No coordinate interpolation or invented OSM IDs.
+  const confluences = stem.filter(
+    (n) => (local.incoming.get(n)?.length ?? 0) > 1,
+  );
+  const branchSites = confluences.flatMap((confluenceNodeId) =>
+    (local.incoming.get(confluenceNodeId) ?? [])
+      .filter((e) => !stemNodes.has(e.from))
+      .map((e) => ({ nodeId: e.from, confluenceNodeId })),
+  );
+  const siteNodes = new Set([end, ...branchSites.map((s) => s.nodeId)]);
+  const interiorStem = stem.filter(
+    (n) =>
+      n !== end &&
+      n !== start &&
+      (local.incoming.get(n)?.length ?? 0) === 1 &&
+      (local.outgoing.get(n)?.length ?? 0) === 1,
+  );
+  // Three main-stem checks target quarters of the final candidate set. Evaluate
+  // actual reach partitions, including splits, and break equal scores by OSM ID.
+  const finalReachCount = natural.length + branchSites.length + 3;
+  for (const fraction of [0.25, 0.5, 0.75]) {
+    const choices = interiorStem
+      .filter((n) => !siteNodes.has(n))
+      .map((nodeId) => {
+        const trial = collapse(selectedEdges, new Set([...siteNodes, nodeId]));
+        const r = trial.find((r) => r.toNode === nodeId)!;
+        const present = compileGraph({
+          reaches: trial,
+          sites: [],
+        }).upstream.get(r.id)!.size;
+        return {
+          nodeId,
+          score: Math.abs(present - finalReachCount * fraction),
+        };
+      })
+      .sort((a, b) => a.score - b.score || a.nodeId - b.nodeId);
+    if (!choices.length)
+      throw new Error("Insufficient existing main-stem observation nodes");
+    siteNodes.add(choices[0]!.nodeId);
+  }
   for (const n of siteNodes)
     if (
       n !== end &&
@@ -254,10 +309,22 @@ export function buildNetwork(cacheText: string) {
   const sites: GeoSite[] = ordered.map((n, i) => ({
     code: String(i + 1).padStart(3, "0"),
     reachId: reaches.find((r) => r.toNode === n)!.id,
-    accessible: false,
+    accessible: !!review,
     osmNodeId: n,
     coordinates: coords.get(n)!,
-    access_review_state: "unreviewed",
+    access_review_state: review ? "prototype_assumed" : "unreviewed",
+    access_note:
+      review?.site_access_note ??
+      "Physical access unreviewed; not eligible for recommendations",
+    id: `osm-site-${n}`,
+    placement:
+      n === end
+        ? "outlet"
+        : branchSites.some((s) => s.nodeId === n)
+          ? "tributary_confluence"
+          : "main_stem_partition",
+    confluenceNodeId:
+      branchSites.find((s) => s.nodeId === n)?.confluenceNodeId ?? null,
     label: "StreamTrace identifiers, not official OneAquaHealth sites",
   }));
   const junctions = numeric(local.incoming.keys())
@@ -322,8 +389,10 @@ export function buildNetwork(cacheText: string) {
     query:
       '[out:json][timeout:60];way["waterway"~"river|stream"](40.10,-8.50,40.26,-8.28);out geom;',
     cache_sha256: createHash("sha256").update(cacheText).digest("hex"),
-    topology_review_state: "unreviewed",
-    geographic_recommendations_enabled: false,
+    topology_review_state: review?.state ?? "unreviewed",
+    topology_review_note: review?.note ?? "No visual developer review recorded",
+    topology_reviewed_by: review?.reviewed_by ?? null,
+    geographic_recommendations_enabled: !!review,
     site_label: "StreamTrace identifiers, not official OneAquaHealth sites",
     geometry_order: "longitude, latitude",
     direction: "OSM way node order; no automatic reversal",
@@ -334,6 +403,12 @@ export function buildNetwork(cacheText: string) {
       method:
         "Contiguous Mondego section with every cached upstream branch joining inside the section. The upstream main-stem boundary truncates the larger river; the outlet is a study boundary, not a river mouth.",
       omittedIncomingAtBoundary,
+      sitePlacement:
+        "Nearest existing tributary node before each main-stem confluence, three main-stem quarter-partition checks, and the boundary outlet",
+      siteCodePolicy:
+        "Deterministic topological order with OSM-node ties; stable osm-site IDs preserve identity when expanding and renumbering sites",
+      reachBudget:
+        "The 11-site revision supersedes the original 30-reach cap; extra reaches subdivide unchanged OSM edges",
     },
     stats: {
       cachedWays: ways.length,
@@ -352,10 +427,8 @@ export function buildNetwork(cacheText: string) {
     },
   };
   compileGraph({ reaches, sites });
-  if (reaches.length < 15 || reaches.length > 30)
-    throw new Error(
-      `Curation produced ${reaches.length} reaches, outside target`,
-    );
+  if (sites.length < 10 || sites.length > 12)
+    throw new Error(`Curation produced ${sites.length} sites, outside target`);
   return {
     network: { metadata, reaches, sites },
     review: {
@@ -375,6 +448,9 @@ if (
 ) {
   const result = buildNetwork(
     readFileSync(new URL("data/coimbra_osm.json", root), "utf8"),
+    JSON.parse(
+      readFileSync(new URL("data/coimbra.prototype-review.json", root), "utf8"),
+    ) as PrototypeReview,
   );
   writeFileSync(
     new URL("data/coimbra.network.json", root),
@@ -387,5 +463,23 @@ if (
   console.log(serialize(result.network.metadata.stats));
   console.log(
     `Direction-review flags: ${result.review.flags.length}; selected affected reaches: ${new Set(result.review.flags.flatMap((f) => f.selectedReachIds)).size}`,
+  );
+  const compiled = compileGraph(result.network);
+  console.log("Site | placement | present candidates | absent candidates");
+  for (const site of result.network.sites) {
+    const present = compiled.upstream.get(site.reachId)!.size;
+    console.log(
+      `${site.code} | ${site.placement} | ${present} | ${result.network.reaches.length - present}`,
+    );
+  }
+  const first = investigate(
+    result.network,
+    { id: "partition-preview", signal: "foam" },
+    [],
+  ).recommendation;
+  console.log(
+    first
+      ? `Recommended first site: ${first.siteCode}; present ${first.present.length}, absent ${first.absent.length}.`
+      : "No first-site recommendation available.",
   );
 }

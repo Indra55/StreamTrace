@@ -5,6 +5,7 @@ import {
   buildNetwork,
   serialize,
   type Cache,
+  type PrototypeReview,
 } from "../scripts/build-network.ts";
 import {
   compileGraph,
@@ -16,17 +17,29 @@ const cacheText = readFileSync(
   "utf8",
 );
 const cache = JSON.parse(cacheText) as Cache;
-const built = buildNetwork(cacheText);
+const review = JSON.parse(
+  readFileSync(
+    new URL("../data/coimbra.prototype-review.json", import.meta.url),
+    "utf8",
+  ),
+) as PrototypeReview;
+const built = buildNetwork(cacheText, review);
 const graph = built.network;
 
-test("cached network compiles, has one outlet, seven real tributaries and 29 reaches", () => {
+test("cached network compiles, has one outlet, seven real tributaries and 11 observation sites", () => {
   compileGraph(graph);
-  assert.equal(graph.reaches.length, 29);
+  assert.equal(graph.reaches.length, 35);
+  assert.equal(graph.sites.length, 11);
   assert.equal(graph.metadata.stats.mainStemTributaries, 7);
   assert.equal(graph.reaches.filter((r) => !r.downstream.length).length, 1);
-  assert.equal(graph.metadata.topology_review_state, "unreviewed");
-  assert.equal(graph.metadata.geographic_recommendations_enabled, false);
-  assert.ok(graph.sites.every((s) => !s.accessible));
+  assert.equal(graph.metadata.topology_review_state, "prototype_confirmed");
+  assert.equal(graph.metadata.topology_review_note, review.note);
+  assert.equal(graph.metadata.geographic_recommendations_enabled, true);
+  assert.ok(
+    graph.sites.every(
+      (s) => s.accessible && s.access_review_state === "prototype_assumed",
+    ),
+  );
 });
 
 test("every segment and geometry comes from cached OSM; no invented or reversed edges", () => {
@@ -134,7 +147,7 @@ test("engine upstream sets agree with independent OSM-node traversal at every si
 });
 
 test("network and review artifacts are byte-identical on repeated cached builds", () => {
-  const again = buildNetwork(cacheText);
+  const again = buildNetwork(cacheText, review);
   for (const key of ["network", "review"] as const)
     assert.equal(serialize(built[key]), serialize(again[key]));
   assert.equal(
@@ -155,7 +168,12 @@ test("network and review artifacts are byte-identical on repeated cached builds"
   reordered.elements.reverse();
   const shuffled = buildNetwork(JSON.stringify(reordered));
   assert.deepEqual(shuffled.network.reaches, graph.reaches);
-  assert.deepEqual(shuffled.network.sites, graph.sites);
+  const identities = (sites: typeof graph.sites) =>
+    sites.map(
+      ({ accessible, access_review_state, access_note, ...identity }) =>
+        identity,
+    );
+  assert.deepEqual(identities(shuffled.network.sites), identities(graph.sites));
 });
 
 test("direction review retains uncertain OSM splits without reversing or inventing connections", () => {
@@ -172,21 +190,74 @@ test("direction review retains uncertain OSM splits without reversing or inventi
   assert.ok(built.review.flags.every((f) => f.selectedReachIds.length === 0));
 });
 
-test("synthetic smoke: outlet present, then branch absent narrows candidates", () => {
-  const outlet = graph.sites.find(
-    (s) =>
-      graph.reaches.find((r) => r.id === s.reachId)!.downstream.length === 0,
-  )!;
-  const branch = graph.sites.find(
-    (s) => !graph.reaches.find((r) => r.id === s.reachId)!.mainStem,
-  )!;
-  const present: ReviewedReport = {
-    reportId: "01-synthetic-outlet",
+test("one real OSM observation node just upstream of every main-stem tributary confluence", () => {
+  const branches = graph.sites.filter(
+    (s) => s.placement === "tributary_confluence",
+  );
+  assert.equal(branches.length, 7);
+  const expectedConfluences = graph.metadata.stats.tributariesPerJunction
+    .filter((j) => j.onMainStem)
+    .map((j) => j.nodeId)
+    .sort((a, b) => a - b);
+  assert.deepEqual(
+    branches.map((s) => s.confluenceNodeId!).sort((a, b) => a - b),
+    expectedConfluences,
+  );
+  for (const site of branches) {
+    assert.ok(
+      cache.elements.some((w) =>
+        w.nodes.some(
+          (n, i) =>
+            n === site.osmNodeId && w.nodes[i + 1] === site.confluenceNodeId,
+        ),
+      ),
+    );
+    assert.ok(!graph.reaches.find((r) => r.id === site.reachId)!.mainStem);
+  }
+  assert.equal(
+    graph.sites.filter((s) => s.placement === "main_stem_partition").length,
+    3,
+  );
+  assert.deepEqual(
+    graph.sites.map((s) => s.code),
+    Array.from({ length: 11 }, (_, i) => String(i + 1).padStart(3, "0")),
+  );
+  assert.equal(new Set(graph.sites.map((s) => s.id)).size, 11);
+});
+
+test("review is opt-in and bound to this cache; other networks default unreviewed", () => {
+  const unreviewed = buildNetwork(cacheText).network;
+  assert.equal(unreviewed.metadata.topology_review_state, "unreviewed");
+  assert.equal(unreviewed.metadata.geographic_recommendations_enabled, false);
+  assert.ok(unreviewed.sites.every((s) => !s.accessible));
+  assert.equal(
+    investigate(unreviewed, { id: "smoke", signal: "foam" }, []).recommendation,
+    null,
+  );
+  assert.throws(
+    () =>
+      buildNetwork(cacheText, { ...review, cache_sha256: "different-cache" }),
+    /match this exact cache/,
+  );
+});
+
+test("synthetic smoke: first approved branch absence removes 11 of 35 candidates", () => {
+  const compiled = compileGraph(graph);
+  const branch = graph.sites
+    .filter((s) => s.placement === "tributary_confluence")
+    .sort(
+      (a, b) =>
+        compiled.upstream.get(b.reachId)!.size -
+          compiled.upstream.get(a.reachId)!.size ||
+        a.code.localeCompare(b.code),
+    )[0]!;
+  const absent: ReviewedReport = {
+    reportId: "first-synthetic-branch",
     revision: 1,
     caseId: "smoke",
     signal: "foam",
-    siteCode: outlet.code,
-    value: "present",
+    siteCode: branch.code,
+    value: "absent",
     confirmed: true,
     source: "observation",
     review: "approved",
@@ -194,27 +265,25 @@ test("synthetic smoke: outlet present, then branch absent narrows candidates", (
     absenceComparable: true,
   };
   const c = { id: "smoke", signal: "foam" };
-  const before = investigate(graph, c, [present]);
-  const after = investigate(graph, c, [
-    present,
-    {
-      ...present,
-      reportId: "02-synthetic-branch",
-      siteCode: branch.code,
-      value: "absent",
-    },
-  ]);
-  assert.equal(before.candidates.length, 29);
-  assert.ok(
-    after.candidates.length > 0 &&
-      after.candidates.length < before.candidates.length,
-  );
-  assert.equal(
-    after.recommendation,
-    null,
-    "geographic recommendations remain disabled through inaccessible sites",
-  );
+  const before = investigate(graph, c, []),
+    after = investigate(graph, c, [absent]);
+  assert.equal(before.candidates.length, 35);
+  assert.equal(after.candidates.length, 24);
+  assert.ok(after.recommendation);
+  assert.equal(before.recommendation?.siteCode, "009");
+  assert.equal(before.recommendation?.present.length, 18);
+  assert.equal(before.recommendation?.absent.length, 17);
   console.log(
-    `Synthetic smoke: present at ${outlet.code}: ${before.candidates.length}; absent at branch ${branch.code}: ${after.candidates.length}.`,
+    `First approved absence at tributary site ${branch.code}: ${before.candidates.length} -> ${after.candidates.length} candidates.`,
+  );
+  console.log("Site | placement | present candidates | absent candidates");
+  for (const site of graph.sites) {
+    const present = compiled.upstream.get(site.reachId)!.size;
+    console.log(
+      `${site.code} | ${site.placement} | ${present} | ${graph.reaches.length - present}`,
+    );
+  }
+  console.log(
+    `Recommended first site ${before.recommendation!.siteCode}: present ${before.recommendation!.present.length}, absent ${before.recommendation!.absent.length}.`,
   );
 });

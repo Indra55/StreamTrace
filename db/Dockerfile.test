@@ -1,0 +1,3 @@
+FROM postgres:16-alpine
+RUN apk add --no-cache openssl && mkdir -p /tls && openssl req -x509 -newkey rsa:2048 -nodes -keyout /tls/server.key -out /tls/server.crt -days 365 -subj /CN=localhost && chown -R postgres:postgres /tls && chmod 600 /tls/server.key
+CMD ["postgres", "-c", "ssl=on", "-c", "ssl_cert_file=/tls/server.crt", "-c", "ssl_key_file=/tls/server.key"]

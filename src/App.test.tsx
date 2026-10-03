@@ -18,10 +18,10 @@ function confirmedNetwork() {
 test("approving pending absence then withdrawing restores candidates through the engine adapter", async () => {
   const user = userEvent.setup();
   render(<App initialView="Diagram" />);
-  expect(screen.getByTestId("candidate-count").textContent).toBe("25");
+  expect(screen.getByTestId("candidate-count").textContent).toBe("14");
   const pending = within(
     screen.getByRole("article", {
-      name: "Pending simulated branch observation at site 003",
+      name: "Pending simulated observation at site 009",
     }),
   );
   expect(
@@ -39,9 +39,9 @@ test("approving pending absence then withdrawing restores candidates through the
     pending.getByLabelText("Absence is comparable, persistent and detectable"),
   );
   await user.click(pending.getByRole("button", { name: "Approve" }));
-  expect(screen.getByTestId("candidate-count").textContent).toBe("14");
+  expect(screen.getByTestId("candidate-count").textContent).toBe("7");
   await user.click(pending.getByRole("button", { name: "Withdraw" }));
-  expect(screen.getByTestId("candidate-count").textContent).toBe("25");
+  expect(screen.getByTestId("candidate-count").textContent).toBe("14");
   expect(screen.getByText(/Demo reviewer withdrew approval/)).toBeTruthy();
 });
 
@@ -65,7 +65,19 @@ test("conflict pauses an otherwise useful recommendation", async () => {
 });
 
 test("unreviewed topology always hides geographic recommendations", () => {
-  render(<App initialView="Diagram" />);
+  render(
+    <App
+      data={{
+        ...network,
+        metadata: {
+          ...network.metadata,
+          topology_review_state: "unreviewed",
+          geographic_recommendations_enabled: false,
+        },
+      }}
+      initialView="Diagram"
+    />,
+  );
   expect(
     screen.getByText(
       "Geographic recommendations disabled: topology unreviewed",
@@ -117,7 +129,7 @@ test("reviewer demo makes no backend requests while adding, reviewing, conflicti
     screen.getByRole("button", { name: "Load conflicting evidence" }),
   );
   await user.click(screen.getByRole("button", { name: "Reset demo" }));
-  expect(screen.getByTestId("candidate-count").textContent).toBe("25");
+  expect(screen.getByTestId("candidate-count").textContent).toBe("14");
   expect(fetch).not.toHaveBeenCalled();
   expect(xhr).not.toHaveBeenCalled();
 });
@@ -138,16 +150,28 @@ test("keyboard view navigation and site opening work without tiles", async () =>
   ).toBeTruthy();
 });
 
-test('real Leaflet tile failure suggests the schematic and markers are keyboard labelled',async()=>{
-  const L=await import('leaflet');
-  let tiles:import('leaflet').TileLayer|undefined;
-  const factory=L.default.tileLayer;
-  vi.spyOn(L.default,'tileLayer').mockImplementation((...args)=>{tiles=factory(...args);return tiles;});
-  const {container}=render(<App/>);
+test("real Leaflet tile failure suggests the schematic and markers are keyboard labelled", async () => {
+  const L = await import("leaflet");
+  let tiles: import("leaflet").TileLayer | undefined;
+  const factory = L.default.tileLayer;
+  vi.spyOn(L.default, "tileLayer").mockImplementation((...args) => {
+    tiles = factory(...args);
+    return tiles;
+  });
+  const { container } = render(<App />);
   expect(container.querySelector('[aria-label="Zoom in"]')).toBeTruthy();
-  expect(container.querySelector('[aria-label^="Open site 003:"]')).toBeTruthy();
-  act(()=>{tiles?.fire('tileerror');});
-  expect(screen.getByRole('button',{name:'Use Diagram'})).toBeTruthy();
-  const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'Use Diagram'}));
-  expect(screen.getByRole('group',{name:'Stream network schematic, flowing left to right'})).toBeTruthy();
+  expect(
+    container.querySelector('[aria-label^="Open site 003:"]'),
+  ).toBeTruthy();
+  act(() => {
+    tiles?.fire("tileerror");
+  });
+  expect(screen.getByRole("button", { name: "Use Diagram" })).toBeTruthy();
+  const user = userEvent.setup();
+  await user.click(screen.getByRole("button", { name: "Use Diagram" }));
+  expect(
+    screen.getByRole("group", {
+      name: "Stream network schematic, flowing left to right",
+    }),
+  ).toBeTruthy();
 });

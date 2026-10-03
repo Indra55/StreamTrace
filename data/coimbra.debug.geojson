@@ -105,15 +105,11 @@
           [
             -8.3696885,
             40.1975766
-          ],
-          [
-            -8.3700143,
-            40.198209
           ]
         ]
       },
       "properties": {
-        "id": "osm-10221406521-10221406544-8236942d16",
+        "id": "osm-10221406521-10221406543-545ebd4c17",
         "name": "Unnamed stream",
         "stroke": "#60a5fa",
         "stroke-width": 3
@@ -129,7 +125,57 @@
         ]
       },
       "properties": {
-        "title": "osm-10221406521-10221406544-8236942d16 upstream",
+        "title": "osm-10221406521-10221406543-545ebd4c17 upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3696885,
+          40.1975766
+        ]
+      },
+      "properties": {
+        "title": "osm-10221406521-10221406543-545ebd4c17 downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.3696885,
+            40.1975766
+          ],
+          [
+            -8.3700143,
+            40.198209
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-10221406543-10221406544-839d310038",
+        "name": "Unnamed stream",
+        "stroke": "#60a5fa",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3696885,
+          40.1975766
+        ]
+      },
+      "properties": {
+        "title": "osm-10221406543-10221406544-839d310038 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -143,7 +189,7 @@
         ]
       },
       "properties": {
-        "title": "osm-10221406521-10221406544-8236942d16 downstream",
+        "title": "osm-10221406543-10221406544-839d310038 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -309,15 +355,11 @@
           [
             -8.3669041,
             40.203859
-          ],
-          [
-            -8.3661326,
-            40.202913
           ]
         ]
       },
       "properties": {
-        "id": "osm-10309165347-10309165362-98cc57e2e3",
+        "id": "osm-10309165347-10309165361-4f44729b43",
         "name": "Unnamed stream",
         "stroke": "#60a5fa",
         "stroke-width": 3
@@ -333,7 +375,57 @@
         ]
       },
       "properties": {
-        "title": "osm-10309165347-10309165362-98cc57e2e3 upstream",
+        "title": "osm-10309165347-10309165361-4f44729b43 upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3669041,
+          40.203859
+        ]
+      },
+      "properties": {
+        "title": "osm-10309165347-10309165361-4f44729b43 downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.3669041,
+            40.203859
+          ],
+          [
+            -8.3661326,
+            40.202913
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-10309165361-10309165362-98ed28b2c7",
+        "name": "Unnamed stream",
+        "stroke": "#60a5fa",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3669041,
+          40.203859
+        ]
+      },
+      "properties": {
+        "title": "osm-10309165361-10309165362-98ed28b2c7 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -347,7 +439,7 @@
         ]
       },
       "properties": {
-        "title": "osm-10309165347-10309165362-98cc57e2e3 downstream",
+        "title": "osm-10309165361-10309165362-98ed28b2c7 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -411,15 +503,11 @@
           [
             -8.37435,
             40.1980409
-          ],
-          [
-            -8.3741621,
-            40.1972504
           ]
         ]
       },
       "properties": {
-        "id": "osm-10309165363-10309165373-45b28d1f56",
+        "id": "osm-10309165363-10309165372-b948c4743d",
         "name": "Unnamed stream",
         "stroke": "#60a5fa",
         "stroke-width": 3
@@ -435,7 +523,57 @@
         ]
       },
       "properties": {
-        "title": "osm-10309165363-10309165373-45b28d1f56 upstream",
+        "title": "osm-10309165363-10309165372-b948c4743d upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.37435,
+          40.1980409
+        ]
+      },
+      "properties": {
+        "title": "osm-10309165363-10309165372-b948c4743d downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.37435,
+            40.1980409
+          ],
+          [
+            -8.3741621,
+            40.1972504
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-10309165372-10309165373-c830b3c1cc",
+        "name": "Unnamed stream",
+        "stroke": "#60a5fa",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.37435,
+          40.1980409
+        ]
+      },
+      "properties": {
+        "title": "osm-10309165372-10309165373-c830b3c1cc upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -449,7 +587,7 @@
         ]
       },
       "properties": {
-        "title": "osm-10309165363-10309165373-45b28d1f56 downstream",
+        "title": "osm-10309165372-10309165373-c830b3c1cc downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -517,15 +655,11 @@
           [
             -8.3855509,
             40.1907306
-          ],
-          [
-            -8.3861689,
-            40.1913418
           ]
         ]
       },
       "properties": {
-        "id": "osm-10309165374-251615232-3436daa1f2",
+        "id": "osm-10309165374-10309165385-2ad0a20494",
         "name": "Unnamed stream",
         "stroke": "#60a5fa",
         "stroke-width": 3
@@ -541,7 +675,57 @@
         ]
       },
       "properties": {
-        "title": "osm-10309165374-251615232-3436daa1f2 upstream",
+        "title": "osm-10309165374-10309165385-2ad0a20494 upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3855509,
+          40.1907306
+        ]
+      },
+      "properties": {
+        "title": "osm-10309165374-10309165385-2ad0a20494 downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.3855509,
+            40.1907306
+          ],
+          [
+            -8.3861689,
+            40.1913418
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-10309165385-251615232-4801a24acd",
+        "name": "Unnamed stream",
+        "stroke": "#60a5fa",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3855509,
+          40.1907306
+        ]
+      },
+      "properties": {
+        "title": "osm-10309165385-251615232-4801a24acd upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -555,7 +739,7 @@
         ]
       },
       "properties": {
-        "title": "osm-10309165374-251615232-3436daa1f2 downstream",
+        "title": "osm-10309165385-251615232-4801a24acd downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -631,15 +815,11 @@
           [
             -8.3536975,
             40.2049638
-          ],
-          [
-            -8.3544271,
-            40.2053341
           ]
         ]
       },
       "properties": {
-        "id": "osm-10570263955-10570263972-0eaf702c68",
+        "id": "osm-10570263955-10570263971-02a014a7a1",
         "name": "Unnamed stream",
         "stroke": "#60a5fa",
         "stroke-width": 3
@@ -655,7 +835,57 @@
         ]
       },
       "properties": {
-        "title": "osm-10570263955-10570263972-0eaf702c68 upstream",
+        "title": "osm-10570263955-10570263971-02a014a7a1 upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3536975,
+          40.2049638
+        ]
+      },
+      "properties": {
+        "title": "osm-10570263955-10570263971-02a014a7a1 downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.3536975,
+            40.2049638
+          ],
+          [
+            -8.3544271,
+            40.2053341
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-10570263971-10570263972-8d98361542",
+        "name": "Unnamed stream",
+        "stroke": "#60a5fa",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3536975,
+          40.2049638
+        ]
+      },
+      "properties": {
+        "title": "osm-10570263971-10570263972-8d98361542 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -669,7 +899,7 @@
         ]
       },
       "properties": {
-        "title": "osm-10570263955-10570263972-0eaf702c68 downstream",
+        "title": "osm-10570263971-10570263972-8d98361542 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -745,52 +975,6 @@
           [
             -8.3556981,
             40.1963474
-          ]
-        ]
-      },
-      "properties": {
-        "id": "osm-10570263986-10221430583-d3b5e91e2d",
-        "name": "Unnamed stream",
-        "stroke": "#60a5fa",
-        "stroke-width": 3
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -8.3414943,
-          40.1984654
-        ]
-      },
-      "properties": {
-        "title": "osm-10570263986-10221430583-d3b5e91e2d upstream",
-        "marker-color": "#16a34a"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -8.3556981,
-          40.1963474
-        ]
-      },
-      "properties": {
-        "title": "osm-10570263986-10221430583-d3b5e91e2d downstream",
-        "marker-color": "#dc2626"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            -8.3556981,
-            40.1963474
           ],
           [
             -8.357007,
@@ -851,15 +1035,11 @@
           [
             -8.3688321,
             40.1986569
-          ],
-          [
-            -8.3691312,
-            40.1987062
           ]
         ]
       },
       "properties": {
-        "id": "osm-10221430583-251615210-5b8fdefeae",
+        "id": "osm-10570263986-10221430596-a3d3c505cc",
         "name": "Unnamed stream",
         "stroke": "#60a5fa",
         "stroke-width": 3
@@ -870,12 +1050,62 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.3556981,
-          40.1963474
+          -8.3414943,
+          40.1984654
         ]
       },
       "properties": {
-        "title": "osm-10221430583-251615210-5b8fdefeae upstream",
+        "title": "osm-10570263986-10221430596-a3d3c505cc upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3688321,
+          40.1986569
+        ]
+      },
+      "properties": {
+        "title": "osm-10570263986-10221430596-a3d3c505cc downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.3688321,
+            40.1986569
+          ],
+          [
+            -8.3691312,
+            40.1987062
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-10221430596-251615210-138331553c",
+        "name": "Unnamed stream",
+        "stroke": "#60a5fa",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3688321,
+          40.1986569
+        ]
+      },
+      "properties": {
+        "title": "osm-10221430596-251615210-138331553c upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -889,7 +1119,7 @@
         ]
       },
       "properties": {
-        "title": "osm-10221430583-251615210-5b8fdefeae downstream",
+        "title": "osm-10221430596-251615210-138331553c downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -955,23 +1185,11 @@
           [
             -8.3549515,
             40.2049991
-          ],
-          [
-            -8.3556194,
-            40.2047742
-          ],
-          [
-            -8.3564954,
-            40.2045948
-          ],
-          [
-            -8.3574181,
-            40.2045771
           ]
         ]
       },
       "properties": {
-        "id": "osm-10570263972-251615195-933cd8ec2c",
+        "id": "osm-10570263972-251615192-231288b021",
         "name": "Rio Mondego",
         "stroke": "#1e3a8a",
         "stroke-width": 3
@@ -987,7 +1205,7 @@
         ]
       },
       "properties": {
-        "title": "osm-10570263972-251615195-933cd8ec2c upstream",
+        "title": "osm-10570263972-251615192-231288b021 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -996,12 +1214,12 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.3574181,
-          40.2045771
+          -8.3549515,
+          40.2049991
         ]
       },
       "properties": {
-        "title": "osm-10570263972-251615195-933cd8ec2c downstream",
+        "title": "osm-10570263972-251615192-231288b021 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -1010,6 +1228,18 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
+          [
+            -8.3549515,
+            40.2049991
+          ],
+          [
+            -8.3556194,
+            40.2047742
+          ],
+          [
+            -8.3564954,
+            40.2045948
+          ],
           [
             -8.3574181,
             40.2045771
@@ -1029,7 +1259,7 @@
         ]
       },
       "properties": {
-        "id": "osm-251615195-8414686363-41a88539f7",
+        "id": "osm-251615192-8414686363-a43dfc3648",
         "name": "Rio Mondego",
         "stroke": "#1e3a8a",
         "stroke-width": 3
@@ -1040,12 +1270,12 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.3574181,
-          40.2045771
+          -8.3549515,
+          40.2049991
         ]
       },
       "properties": {
-        "title": "osm-251615195-8414686363-41a88539f7 upstream",
+        "title": "osm-251615192-8414686363-a43dfc3648 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -1059,7 +1289,7 @@
         ]
       },
       "properties": {
-        "title": "osm-251615195-8414686363-41a88539f7 downstream",
+        "title": "osm-251615192-8414686363-a43dfc3648 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -1909,52 +2139,6 @@
           [
             -8.3598788,
             40.2095564
-          ]
-        ]
-      },
-      "properties": {
-        "id": "osm-8414686398-8414686372-0c83ee11c2",
-        "name": "Ribeira de Misarela",
-        "stroke": "#60a5fa",
-        "stroke-width": 3
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -8.3605558,
-          40.2163122
-        ]
-      },
-      "properties": {
-        "title": "osm-8414686398-8414686372-0c83ee11c2 upstream",
-        "marker-color": "#16a34a"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -8.3598788,
-          40.2095564
-        ]
-      },
-      "properties": {
-        "title": "osm-8414686398-8414686372-0c83ee11c2 downstream",
-        "marker-color": "#dc2626"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            -8.3598788,
-            40.2095564
           ],
           [
             -8.3599283,
@@ -2055,15 +2239,11 @@
           [
             -8.3603774,
             40.2050689
-          ],
-          [
-            -8.3605373,
-            40.2047624
           ]
         ]
       },
       "properties": {
-        "id": "osm-8414686372-8414686363-fefc7180d4",
+        "id": "osm-8414686398-8414686362-f51df2e704",
         "name": "Ribeira de Misarela",
         "stroke": "#60a5fa",
         "stroke-width": 3
@@ -2074,12 +2254,62 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.3598788,
-          40.2095564
+          -8.3605558,
+          40.2163122
         ]
       },
       "properties": {
-        "title": "osm-8414686372-8414686363-fefc7180d4 upstream",
+        "title": "osm-8414686398-8414686362-f51df2e704 upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3603774,
+          40.2050689
+        ]
+      },
+      "properties": {
+        "title": "osm-8414686398-8414686362-f51df2e704 downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.3603774,
+            40.2050689
+          ],
+          [
+            -8.3605373,
+            40.2047624
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-8414686362-8414686363-9dcf0af932",
+        "name": "Ribeira de Misarela",
+        "stroke": "#60a5fa",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3603774,
+          40.2050689
+        ]
+      },
+      "properties": {
+        "title": "osm-8414686362-8414686363-9dcf0af932 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -2093,7 +2323,7 @@
         ]
       },
       "properties": {
-        "title": "osm-8414686372-8414686363-fefc7180d4 downstream",
+        "title": "osm-8414686362-8414686363-9dcf0af932 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -2106,6 +2336,52 @@
             -8.3605373,
             40.2047624
           ],
+          [
+            -8.361458,
+            40.2047164
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-8414686363-251615198-f0d664e8dc",
+        "name": "Rio Mondego",
+        "stroke": "#1e3a8a",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3605373,
+          40.2047624
+        ]
+      },
+      "properties": {
+        "title": "osm-8414686363-251615198-f0d664e8dc upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.361458,
+          40.2047164
+        ]
+      },
+      "properties": {
+        "title": "osm-8414686363-251615198-f0d664e8dc downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             -8.361458,
             40.2047164
@@ -2133,7 +2409,7 @@
         ]
       },
       "properties": {
-        "id": "osm-8414686363-10309165362-4bb749b7d6",
+        "id": "osm-251615198-10309165362-03a6db0131",
         "name": "Rio Mondego",
         "stroke": "#1e3a8a",
         "stroke-width": 3
@@ -2144,12 +2420,12 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.3605373,
-          40.2047624
+          -8.361458,
+          40.2047164
         ]
       },
       "properties": {
-        "title": "osm-8414686363-10309165362-4bb749b7d6 upstream",
+        "title": "osm-251615198-10309165362-03a6db0131 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -2163,7 +2439,7 @@
         ]
       },
       "properties": {
-        "title": "osm-8414686363-10309165362-4bb749b7d6 downstream",
+        "title": "osm-251615198-10309165362-03a6db0131 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -2261,15 +2537,11 @@
           [
             -8.3696925,
             40.1983923
-          ],
-          [
-            -8.3700143,
-            40.198209
           ]
         ]
       },
       "properties": {
-        "id": "osm-251615210-10221406544-360d2ec655",
+        "id": "osm-251615210-251615211-ce1e9bedc0",
         "name": "Rio Mondego",
         "stroke": "#1e3a8a",
         "stroke-width": 3
@@ -2285,7 +2557,57 @@
         ]
       },
       "properties": {
-        "title": "osm-251615210-10221406544-360d2ec655 upstream",
+        "title": "osm-251615210-251615211-ce1e9bedc0 upstream",
+        "marker-color": "#16a34a"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3696925,
+          40.1983923
+        ]
+      },
+      "properties": {
+        "title": "osm-251615210-251615211-ce1e9bedc0 downstream",
+        "marker-color": "#dc2626"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -8.3696925,
+            40.1983923
+          ],
+          [
+            -8.3700143,
+            40.198209
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm-251615211-10221406544-07c3001654",
+        "name": "Rio Mondego",
+        "stroke": "#1e3a8a",
+        "stroke-width": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3696925,
+          40.1983923
+        ]
+      },
+      "properties": {
+        "title": "osm-251615211-10221406544-07c3001654 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -2299,7 +2621,7 @@
         ]
       },
       "properties": {
-        "title": "osm-251615210-10221406544-360d2ec655 downstream",
+        "title": "osm-251615211-10221406544-07c3001654 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -2393,52 +2715,6 @@
           [
             -8.376409,
             40.1964642
-          ]
-        ]
-      },
-      "properties": {
-        "id": "osm-10309165373-251615218-9bfeedd677",
-        "name": "Rio Mondego",
-        "stroke": "#1e3a8a",
-        "stroke-width": 3
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -8.3741621,
-          40.1972504
-        ]
-      },
-      "properties": {
-        "title": "osm-10309165373-251615218-9bfeedd677 upstream",
-        "marker-color": "#16a34a"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -8.376409,
-          40.1964642
-        ]
-      },
-      "properties": {
-        "title": "osm-10309165373-251615218-9bfeedd677 downstream",
-        "marker-color": "#dc2626"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            -8.376409,
-            40.1964642
           ],
           [
             -8.377293,
@@ -2503,7 +2779,7 @@
         ]
       },
       "properties": {
-        "id": "osm-251615218-251615232-34b600c67f",
+        "id": "osm-10309165373-251615232-52438e1f86",
         "name": "Rio Mondego",
         "stroke": "#1e3a8a",
         "stroke-width": 3
@@ -2514,12 +2790,12 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.376409,
-          40.1964642
+          -8.3741621,
+          40.1972504
         ]
       },
       "properties": {
-        "title": "osm-251615218-251615232-34b600c67f upstream",
+        "title": "osm-10309165373-251615232-52438e1f86 upstream",
         "marker-color": "#16a34a"
       }
     },
@@ -2533,7 +2809,7 @@
         ]
       },
       "properties": {
-        "title": "osm-251615218-251615232-34b600c67f downstream",
+        "title": "osm-10309165373-251615232-52438e1f86 downstream",
         "marker-color": "#dc2626"
       }
     },
@@ -2592,8 +2868,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.3556981,
-          40.1963474
+          -8.3696885,
+          40.1975766
         ]
       },
       "properties": {
@@ -2606,8 +2882,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.3574181,
-          40.2045771
+          -8.3688321,
+          40.1986569
         ]
       },
       "properties": {
@@ -2620,8 +2896,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.3598788,
-          40.2095564
+          -8.3669041,
+          40.203859
         ]
       },
       "properties": {
@@ -2634,12 +2910,96 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -8.376409,
-          40.1964642
+          -8.37435,
+          40.1980409
         ]
       },
       "properties": {
         "title": "004",
+        "marker-color": "#2563eb"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3855509,
+          40.1907306
+        ]
+      },
+      "properties": {
+        "title": "005",
+        "marker-color": "#2563eb"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3536975,
+          40.2049638
+        ]
+      },
+      "properties": {
+        "title": "006",
+        "marker-color": "#2563eb"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3549515,
+          40.2049991
+        ]
+      },
+      "properties": {
+        "title": "007",
+        "marker-color": "#2563eb"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3603774,
+          40.2050689
+        ]
+      },
+      "properties": {
+        "title": "008",
+        "marker-color": "#2563eb"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.361458,
+          40.2047164
+        ]
+      },
+      "properties": {
+        "title": "009",
+        "marker-color": "#2563eb"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.3696925,
+          40.1983923
+        ]
+      },
+      "properties": {
+        "title": "010",
         "marker-color": "#2563eb"
       }
     },
@@ -2653,7 +3013,7 @@
         ]
       },
       "properties": {
-        "title": "005",
+        "title": "011",
         "marker-color": "#2563eb"
       }
     },

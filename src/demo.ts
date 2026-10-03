@@ -1,4 +1,4 @@
-import cachedNetwork from "../data/coimbra.network.json";
+import cachedNetwork from "../data/coimbra.network.json" with { type: "json" };
 import {
   fromDatabase,
   type StoredObservation,
@@ -6,6 +6,7 @@ import {
 } from "../engine/adapter.ts";
 import {
   investigate,
+  compileGraph,
   type InvestigationResult,
   type Value,
 } from "../engine/index.ts";
@@ -77,37 +78,122 @@ function observation(
   };
 }
 export function seed(data: Network, at: string): DemoState {
+  const upstream = compileGraph(data).upstream;
+  const branches = data.sites
+    .filter((s) => s.placement === "tributary_confluence")
+    .sort(
+      (a, b) =>
+        upstream.get(b.reachId)!.size - upstream.get(a.reachId)!.size ||
+        a.code.localeCompare(b.code),
+    );
+  const first = branches[0];
+  if (!first) throw new Error("Demo requires a tributary observation site");
+  const firstObservation = observation(
+    "seed-1",
+    first.code,
+    "absent",
+    "Simulated branch observation",
+  );
+  const approved = (report_id: string): StoredDecision => ({
+    report_id,
+    revision: 1,
+    state: "approved",
+    assumptions_acknowledged: true,
+    absence_comparable: true,
+  });
+  const firstState = {
+    observations: [firstObservation],
+    decisions: [approved("seed-1")],
+  };
+  const firstResult = evaluate(firstState, data);
+  const mains = data.sites
+    .filter((s) => s.placement === "main_stem_partition")
+    .sort(
+      (a, b) =>
+        upstream.get(b.reachId)!.size - upstream.get(a.reachId)!.size ||
+        a.code.localeCompare(b.code),
+    );
+  const second = mains.find((s) => {
+    const count = firstResult.candidates.filter((id) =>
+      upstream.get(s.reachId)!.has(id),
+    ).length;
+    return count > 3 && count < firstResult.candidates.length;
+  });
+  if (!second) throw new Error("Demo requires an informative main-stem site");
   const observations = [
-    observation("seed-1", "004", "present", "Simulated main-stem observation"),
-    observation("seed-2", "001", "absent", "Simulated branch observation"),
+    firstObservation,
     observation(
-      "seed-3",
-      "003",
-      "absent",
-      "Pending simulated branch observation",
+      "seed-2",
+      second.code,
+      "present",
+      "Simulated main-stem observation",
     ),
   ];
-  const decisions: StoredDecision[] = observations.map((r, i) => ({
-    report_id: r.id,
+  const decisions = [approved("seed-1"), approved("seed-2")];
+  const secondResult = evaluate({ observations, decisions }, data);
+  const pendingChoices = data.sites
+    .filter((s) => s.code !== first.code && s.code !== second.code)
+    .map((site) => {
+      const present = secondResult.candidates.filter((id) =>
+        upstream.get(site.reachId)!.has(id),
+      ).length;
+      return {
+        site,
+        present,
+        absent: secondResult.candidates.length - present,
+      };
+    })
+    .filter((s) => s.present > 0 && s.absent > 0)
+    .sort(
+      (a, b) =>
+        Math.max(a.present, a.absent) - Math.max(b.present, b.absent) ||
+        a.site.code.localeCompare(b.site.code),
+    );
+  const pending = pendingChoices[0]?.site;
+  if (!pending)
+    throw new Error("Demo requires an informative pending observation");
+  observations.push(
+    observation(
+      "seed-3",
+      pending.code,
+      "absent",
+      "Pending simulated observation",
+    ),
+  );
+  decisions.push({
+    report_id: "seed-3",
     revision: 1,
-    state: i < 2 ? "approved" : "unreviewed",
-    assumptions_acknowledged: i < 2,
-    absence_comparable: i < 2,
-  }));
-  const after = evaluate({ observations, decisions }, data).candidates.length;
+    state: "unreviewed",
+    assumptions_acknowledged: false,
+    absence_comparable: false,
+  });
   return {
     observations,
     decisions,
-    before: data.reaches.length,
-    after,
+    before: firstResult.candidates.length,
+    after: secondResult.candidates.length,
     sequence: 3,
     history: [
       {
         id: 0,
         at,
-        text: "Demo reviewer loaded two approved simulated observations and one pending observation.",
+        text: `Demo reviewer approved simulated absence at site ${first.code}.`,
         before: data.reaches.length,
-        after,
+        after: firstResult.candidates.length,
+      },
+      {
+        id: 1,
+        at,
+        text: `Demo reviewer approved simulated presence at site ${second.code}.`,
+        before: firstResult.candidates.length,
+        after: secondResult.candidates.length,
+      },
+      {
+        id: 2,
+        at,
+        text: `Demo reviewer loaded pending simulated absence at site ${pending.code}; live approval required.`,
+        before: secondResult.candidates.length,
+        after: secondResult.candidates.length,
       },
     ],
   };
@@ -129,13 +215,20 @@ export function transition(
       observations.some((r) => r.id === "demo-conflict")
     )
       return state;
-    const site = action.type === "conflict" ? "004" : action.site;
+    const conflictTarget = state.observations.find((r) => r.id === "seed-1")!;
+    const site =
+      action.type === "conflict" ? conflictTarget.site_code : action.site;
     if (!data.sites.some((s) => s.code === site))
       throw new Error("Unknown site");
     sequence++;
     const id =
       action.type === "conflict" ? "demo-conflict" : `observation-${sequence}`;
-    const value = action.type === "conflict" ? "absent" : action.value;
+    const value =
+      action.type === "conflict"
+        ? conflictTarget.value === "absent"
+          ? "present"
+          : "absent"
+        : action.value;
     observations.push(
       observation(
         id,
@@ -155,7 +248,7 @@ export function transition(
     });
     text =
       action.type === "conflict"
-        ? "Demo reviewer loaded contradictory approved evidence at site 004."
+        ? `Demo reviewer loaded contradictory approved evidence at site ${site}.`
         : `Demo reviewer added ${valueText(value).toLowerCase()} at site ${site}; awaiting review.`;
   } else {
     const r = observations.find((r) => r.id === action.id),
