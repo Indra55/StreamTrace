@@ -1,0 +1,98 @@
+{
+  "topology_review_state": "unreviewed",
+  "scope": "Largest weakly connected component of cached waterways",
+  "automaticDirectionCorrections": 0,
+  "flags": [
+    {
+      "nodeId": 11982083996,
+      "reasons": [
+        "Multiple outflows: direction conflict or unconfirmed bifurcation; out geom supplies no node tags to confirm bifurcation."
+      ],
+      "sourceOsmWayIds": [
+        23252421,
+        1430017552,
+        1430017553,
+        1430017554,
+        1430017555,
+        1430017556,
+        1430017557,
+        1430017558,
+        1430017559,
+        1430017560,
+        1430017561
+      ],
+      "largestComponentReachIds": [
+        "osm-11982083996-13144918440-29c84465c0",
+        "osm-11982083996-13144918447-60b8ebd873",
+        "osm-11982083996-13144918448-75d29e4f21",
+        "osm-11982083996-13144918449-387c363dc8",
+        "osm-11982083996-13144918450-49b38b30c8",
+        "osm-11982083996-13144918451-c92d6a31ef",
+        "osm-11982083996-13144918452-59875d0d75",
+        "osm-11982083996-13144918460-0a2ad6ff85",
+        "osm-11982083996-13144918462-ca9fd6652f",
+        "osm-11982083996-13144918464-9c162f7550",
+        "osm-13144918465-11982083996-3ce6b5adb6"
+      ],
+      "selectedReachIds": [],
+      "selectedSourceWayReachIds": [
+        "osm-251615191-10570263972-ca82ab8bcc",
+        "osm-251615195-8414686363-41a88539f7",
+        "osm-251615210-10221406544-360d2ec655",
+        "osm-251615218-251615232-34b600c67f",
+        "osm-251615232-251615233-688d6fc11f",
+        "osm-8414686363-10309165362-4bb749b7d6",
+        "osm-10221406544-10309165373-3586f27e06",
+        "osm-10309165362-251615210-04cef5484b",
+        "osm-10309165373-251615218-9bfeedd677",
+        "osm-10570263972-251615195-933cd8ec2c"
+      ]
+    },
+    {
+      "nodeId": 12282800537,
+      "reasons": [
+        "Multiple outflows: direction conflict or unconfirmed bifurcation; out geom supplies no node tags to confirm bifurcation."
+      ],
+      "sourceOsmWayIds": [
+        23392592,
+        1133776319
+      ],
+      "largestComponentReachIds": [
+        "osm-8284396068-12282800537-9de785f8f2",
+        "osm-12282800537-249493532-40d1853c90",
+        "osm-12282800537-249493532-ad0faadc5a"
+      ],
+      "selectedReachIds": [],
+      "selectedSourceWayReachIds": []
+    },
+    {
+      "nodeId": 13144918465,
+      "reasons": [
+        "Multiple outflows: direction conflict or unconfirmed bifurcation; out geom supplies no node tags to confirm bifurcation."
+      ],
+      "sourceOsmWayIds": [
+        23252421,
+        1430017580
+      ],
+      "largestComponentReachIds": [
+        "osm-8593642832-13144918465-8a32d85a2e",
+        "osm-13144918465-7125259071-2865cbb9fc",
+        "osm-13144918465-11982083996-3ce6b5adb6"
+      ],
+      "selectedReachIds": [],
+      "selectedSourceWayReachIds": [
+        "osm-251615191-10570263972-ca82ab8bcc",
+        "osm-251615195-8414686363-41a88539f7",
+        "osm-251615210-10221406544-360d2ec655",
+        "osm-251615218-251615232-34b600c67f",
+        "osm-251615232-251615233-688d6fc11f",
+        "osm-8414686363-10309165362-4bb749b7d6",
+        "osm-10221406544-10309165373-3586f27e06",
+        "osm-10309165362-251615210-04cef5484b",
+        "osm-10309165373-251615218-9bfeedd677",
+        "osm-10570263972-251615195-933cd8ec2c"
+      ]
+    }
+  ],
+  "notice": "All flow directions and observation access need human confirmation, including unflagged reaches."
+}
