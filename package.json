@@ -1,0 +1,19 @@
+{
+  "name": "streamtrace-core",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "benchmark": "node --experimental-strip-types benchmarks/run.ts",
+    "test:rls": "bash scripts/test-rls.sh",
+    "geojson": "node --experimental-strip-types scripts/to-geojson.ts"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.6",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}
