@@ -1,6 +1,7 @@
 import { Link } from "../citizen/navigation.tsx";
 import benchmarkUrl from "../../benchmarks/RESULTS.md?url&no-inline";
 import technicalReferenceUrl from "../../docs/technical-reference.md?url&no-inline";
+import { FhirPrototype } from "./FhirPrototype.tsx";
 import "./documentation.css";
 
 const sections = [
@@ -115,6 +116,7 @@ export function Documentation() {
             <figcaption>Website → API → stored evidence → engine → results back to the website. Text assistance is a separate optional step.</figcaption>
           </figure>
           <details className="docs-detail"><summary>Data, privacy and exports</summary><p>The bundled OpenStreetMap graph contains 35 reaches and 11 prototype sites in a bounded Rio Mondego study area. Shared OSM nodes establish connections; geometric crossings do not. Cached data makes the demo reproducible. Attribution: OpenStreetMap contributors, ODbL.</p><p>Citizen location picking retains a site code and rounded distance rather than submitting raw device coordinates. The public report view exposes approved fields; private evidence and case exports require reviewer access. JSON and a base FHIR R4 Bundle support inspection, without clinical profile certification.</p></details>
+          <div id="fhir"><FhirPrototype/></div>
           <aside className="docs-note docs-boundary"><strong>Know the model’s limits</strong><p>It assumes one persistent origin region, normal downstream propagation and comparable observations. Flow direction was checked visually for the prototype, not by hydrology experts. Physical access to sites is unverified, and the bounded graph cannot cover every upstream source.</p><p><strong>StreamTrace supports investigation planning; it does not identify chemicals or certify water safety.</strong> Stay on safe public paths, do not enter the water, and skip unsafe observations.</p></aside>
         </section>
 

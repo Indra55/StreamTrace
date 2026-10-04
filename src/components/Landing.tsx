@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, setDemoMode } from "../citizen/navigation.tsx";
+import { FhirPrototype } from "./FhirPrototype.tsx";
 
 function FieldIcon({ children }: { children: ReactNode }) {
   return <svg className="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>;
@@ -129,6 +130,7 @@ export function Landing() {
     <section className="feature-section landing-section" aria-labelledby="features-title">
       <div className="section-heading"><p className="section-index">04 / The tools</p><h2 id="features-title">Built to follow the evidence.</h2><p>From the first field report to the next observation, with a human decision at each important step. Clear reports, reviewed evidence and a reason for the next check.</p></div>
       <div className="feature-list">{features.map(feature => <article className="feature-item" key={feature.title}><FieldIcon>{feature.icon}</FieldIcon><div><h3>{feature.title}</h3><p>{feature.text}</p></div></article>)}</div>
+      <FhirPrototype/>
     </section>
 
     <section className="landing-modes landing-section" aria-labelledby="modes-title">

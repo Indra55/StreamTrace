@@ -997,6 +997,11 @@ textarea:focus-visible,select:focus-visible { outline:3px solid #916422; outline
 .menu-toggle { display:none; }
 #main-content:focus,#how-it-works:focus,#network-view:focus { outline-offset:-4px; }
 /* Landing page: a paper field guide with an illustrated evidence map. */
+.fhir-prototype { margin-top:28px; padding:24px 0; border-top:1px solid var(--line); }
+.fhir-prototype p { margin:12px 0; line-height:1.65; }
+.fhir-prototype-notice { color:var(--muted); font-size:.85rem; }
+.fhir-prototype-links { display:flex; flex-wrap:wrap; gap:12px 24px; }
+.fhir-prototype-links a { display:inline-flex; align-items:center; min-height:44px; text-underline-offset:4px; }
 .landing { max-width:1280px; margin:auto; padding:44px 4vw 0; }
 .landing-hero { display:flex; flex-direction:column; gap:48px; padding:32px 0 64px; position:relative; margin-top:0; }
 @media (min-width: 900px) {
