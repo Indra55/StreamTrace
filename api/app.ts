@@ -189,11 +189,11 @@ export async function createApp(pool: Pool, config: ApiConfig, options: { fetche
     if (!user || !valid) return c.json(badLogin, 401);
     const token = await new SignJWT({}).setProtectedHeader({ alg: "HS256" }).setSubject(user.id)
       .setIssuer("streamtrace").setAudience("streamtrace-api").setIssuedAt().setExpirationTime("1h").sign(key);
-    setCookie(c, "streamtrace_session", token, { httpOnly: true, secure: config.NODE_ENV === "production", sameSite: "Strict", path: "/api", maxAge: 3600 });
+    setCookie(c, "streamtrace_session", token, { httpOnly: true, secure: true, sameSite: "None", path: "/api", maxAge: 3600 });
     return c.json({ ok: true });
   });
   app.post("/api/logout", c => {
-    deleteCookie(c,"streamtrace_session",{httpOnly:true,secure:config.NODE_ENV==="production",sameSite:"Strict",path:"/api"});
+    deleteCookie(c,"streamtrace_session",{httpOnly:true,secure:true,sameSite:"None",path:"/api"});
     return c.json({ok:true});
   });
   app.get("/api/reviewer/cases", async c => c.json(await reviewer(c,async client=>(

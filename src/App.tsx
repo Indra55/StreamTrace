@@ -147,7 +147,7 @@ export function Atlas({ data, initialView = "Map", state, result, dispatch, live
               <p className="eyebrow">Study area 01 / Portugal</p>
               {live ? <h2 id="atlas-title">Stream map</h2> : <h1 id="atlas-title">Interactive demo</h1>}
               <p className="atlas-subtitle">
-                Rio Mondego & its upstream branches
+                Rio Mondego & upstream branches · One Health ecosystem monitoring
               </p>
             </div>
             <div className="atlas-index">
@@ -412,8 +412,9 @@ export function Atlas({ data, initialView = "Map", state, result, dispatch, live
             </ol>
           </details>
           <p className="claim">
-            Supports investigation planning. Does not identify chemicals or
-            certify water safety.
+            A One Health approach to environmental monitoring. Supports investigation
+            planning to reduce exposure risk and protect biodiversity. Does not
+            identify chemicals or certify water safety.
           </p>
         </aside>
       </main>

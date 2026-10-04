@@ -83,9 +83,10 @@ export function Opening({ reduced }: { reduced: boolean }) {
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 1.1, delay: 1.3, ease: [0.22, 1, 0.36, 1] }}
             >
-              In a changing climate, caring for our waterways starts with paying
-              attention. A patch of foam. A change in colour. Something that
-              wasn't there before.
+              In a changing climate, healthy waters mean healthy ecosystems and
+              healthy communities. A patch of foam. A change in colour. Dead fish
+              that weren't there before. These signals connect water quality to
+              the well-being of every living thing downstream.
             </motion.p>
 
             <motion.p
@@ -94,7 +95,7 @@ export function Opening({ reduced }: { reduced: boolean }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
             >
-              You notice it. Together, we can follow it.
+              You notice it. Together, we can follow it - a <strong>One Health</strong> approach to protecting our waterways.
             </motion.p>
           </motion.div>
         )}
@@ -149,7 +150,7 @@ export function Process({ reduced }: { reduced: boolean }) {
         </motion.p>
       </AnimatePresence>
       <p className="process-invitation">
-        Let's follow one observation. You'll play both sides.
+        Let's follow one observation. You'll play both sides - citizen and researcher - to see how One Health works in practice.
       </p>
     </section>
   );
