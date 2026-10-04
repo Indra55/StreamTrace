@@ -12,6 +12,7 @@ import type { ApiConfig } from "./config.ts";
 import { withUser } from "./db.ts";
 import { loadCase } from "./data.ts";
 import { fhirBundle } from "./fhir.ts";
+import { oahLoader } from "./oneaquahealth.ts";
 import { citizenContext, publicNetwork, taskFacts } from "./citizen.ts";
 import { writeTask, demoTaskData, demoTaskSchema, TaskCache } from "./task.ts";
 import { makeDraft, draftInputSchema } from "./draft.ts";
@@ -37,6 +38,7 @@ export async function createApp(pool: Pool, config: ApiConfig, options: { fetche
   const aiAttempts = new Map<string, { count: number; until: number }>();
   const voiceAttempts = new Map<string, { count: number; until: number }>();
   const taskCache = new TaskCache();
+  const loadOah = oahLoader(options.fetcher);
   const budget = options.budget ?? dailyBudget;
   const aiOptions = { budget, dailyLimit: config.AI_DAILY_BUDGET };
   app.use("/api/*", cors({ origin: config.CORS_ORIGIN, credentials: true,
@@ -237,5 +239,6 @@ export async function createApp(pool: Pool, config: ApiConfig, options: { fetche
     if (format === "fhir") { c.header("Content-Type", "application/fhir+json"); return c.body(JSON.stringify(fhirBundle(data))); }
     return c.json({ error: "Invalid export format" }, 400);
   });
+  app.get("/api/oneaquahealth/conductivity", async c => c.json(await loadOah()));
   return app;
 }

@@ -29,6 +29,12 @@ Results contain canonical, report-ID-ordered before/after candidate sets and set
 
 `createInvestigation` snapshots inputs and recomputes on every incoming revision. It intentionally has no subtract-only incremental cache: review withdrawals and replacements can expand candidates. `fromDatabase` in `engine/adapter.ts` joins immutable observations with current database decisions. It must receive database results, never arbitrary client claims of authorization. Pure TypeScript types are not an authorization boundary. A future demo should own a separate in-memory instance and never invoke production review APIs.
 
+## OneAquaHealth reference data
+
+The Live Portal (`/workflow`) loads electrical conductivity samples from the public `hl7-eu/oah` repository through `GET /api/oneaquahealth/conductivity`. The source is pinned to revision `b907cf0869b59d82d9138b3d147fca66f333d911`, file `_samples/crete/ec.csv`. The adapter normalizes sampling dates, preserves site identifiers, device and mS/cm units, and computes the absolute change from the first to last sample at each site. It exposes the source link, revision and SHA-256. Successful reads are cached in memory; unavailable or malformed source data returns 502 and remains retryable. No API key is needed for this public source.
+
+The published reference samples are historical Crete measurements, not current conditions or Coimbra case evidence. Loading them performs no database writes and does not affect the investigation engine. The source coordinates are not decoded or assigned to StreamTrace sites. This is a public dataset integration, not a private citizen-app API connection or validated OneAquaHealth profile conformance. Conductivity interpretation follows [USGS guidance](https://www.usgs.gov/publications/specific-electrical-conductance); two sampling dates do not establish cause, a pollution trend or water safety.
+
 ## Node backend and Neon
 
 The schema is Postgres-first, with Neon hosting and enforced row-level security.

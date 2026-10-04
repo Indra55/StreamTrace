@@ -1,163 +1,82 @@
 # StreamTrace
 
-### Turn a stream observation into a useful next check.
+### Someone notices a change in a stream. What happens next?
 
-Built for the **OneAquaHealth IEEE Global Hackathon**, StreamTrace connects citizen observations with researcher review and an explainable stream-network engine. It answers one practical question: **“Where should we check next?”**
+A patch of foam. An unusual colour. Dead fish near a footbridge.
 
-Someone notices foam in a stream. That tells us where the foam was seen, but the source could be farther upstream. StreamTrace helps researchers turn scattered observations into a smaller, traceable search and choose the next observation that could separate the remaining possibilities.
+A citizen can tell you where they saw something. But water moves, and the source of a problem may be farther upstream. A report is a starting point. Someone still has to decide what it means, where to investigate, and which observation would help next.
 
-[Impact](#why-this-matters) · [How it works](#how-it-works) · [Evidence](#what-we-can-demonstrate) · [Try it](#try-it-locally) · [Technical reference](docs/technical-reference.md)
+**StreamTrace helps turn that first observation into a useful next check.** Built for the **OneAquaHealth IEEE Global Hackathon**, it connects community reporting, researcher review, and an explainable stream map around one question: **“Where should we check next?”**
 
-Inspect the [simulated prototype FHIR bundle](docs/fhir/sample-bundle.json) and its [export and validation instructions](docs/fhir/README.md). Reviewers can download a bundle from the case panel next to the JSON export.
+[Try the prototype](#try-it) · [OneAquaHealth connection](#our-oneaquahealth-connection) · [Technical guide](docs/technical-reference.md)
 
-## Why this matters
+## The idea behind it
 
-Field time is limited. Checking every stretch in order can spend that time on sites that tell an investigation very little. Community reports are useful, but a report needs context and review before it can guide a search.
+The starting point was the gap between collecting observations and acting on them. Citizen science gives communities a way to participate, but a growing collection of reports does not automatically become a clear investigation.
 
-StreamTrace brings those pieces together:
+Field teams have limited time. Checking another location is useful only if it helps answer a question. StreamTrace focuses on that decision: use the observations a researcher trusts to narrow the possible source stretches, then suggest a site where another check could separate the remaining possibilities.
 
-| Who benefits | What StreamTrace provides | Why it matters |
-| --- | --- | --- |
-| Citizens | A guided report without an account, a confirmation step and a status reference | Makes local observations available to researchers through a clear submission process |
-| Researchers | A review queue, reversible decisions and explanations for excluded stretches | Keeps the search tied to evidence they can inspect and correct |
-| Field teams | A next site chosen to separate remaining candidate stretches | Helps direct limited observation effort toward a useful check |
-| Communities and ecosystems | A path from local noticing to a structured investigation | Could support earlier follow-up on freshwater concerns, subject to field validation |
+The goal is to give local observations a path into a decision someone can explain, question, and change.
 
-This is the **One Health** connection: freshwater concerns matter to people, aquatic life and the surrounding environment. Our contribution is the investigation step between noticing a concern and planning follow-up. Reduced exposure, restored biodiversity and faster real-world response are intended downstream benefits, **not measured outcomes of this prototype**.
+## From noticing to following up
 
-## How it works
+Imagine someone reports foam at a stream crossing. In StreamTrace, they choose a site, describe what they saw, and confirm the report. They can also say **“not seen”** or **“cannot tell”**. Optional AI helps with wording and context questions; the citizen stays in control of what gets submitted.
 
-```mermaid
-flowchart LR
-    A[Citizen observes a signal] --> B[Confirms and submits a report]
-    B --> C[Researcher reviews evidence and assumptions]
-    C -->|Approved and usable| D[Engine updates possible source stretches]
-    C -->|Unreviewed, uncertain or rejected| E[No change to the search]
-    D --> F[Suggest a useful next observation site]
-    F --> A
-```
+A researcher reviews the report before it affects the investigation. An absence needs extra care: could the person actually have seen the signal, and are the conditions comparable? An uncertain answer stays uncertain.
 
-1. **Observe.** Report the case signal: foam, colour, litter, dead fish or discharge. Choose a site and record “seen”, “not seen” or “cannot tell”. Other concerns go to a general inbox.
-2. **Confirm.** Check the report before submitting. Optional AI can help draft text; it cannot approve evidence.
-3. **Review.** A researcher checks the observation and the case assumptions. A not-seen report needs an explicit comparability check before it can exclude anything.
-4. **Narrow and repeat.** The engine recalculates possible source stretches and recommends an informative site. Withdrawing an approval recalculates the result; conflicting evidence pauses recommendations.
+Once usable evidence is approved, the map shows which upstream stretches still fit. It suggests a next observation site and explains why that check could help. If a reviewer withdraws an approval, the result changes with it. If approved observations conflict, recommendations pause for review.
 
-### A concrete example
+**The important part is the loop:** observe, review, learn something, and make the next check more useful.
 
-The bundled Coimbra demo starts with **35 candidate stream stretches**. These observations are simulated:
+## Why it matters
 
-```mermaid
-flowchart LR
-    A[35 possible stretches] -->|Approved not seen at site 008| B[24 remain]
-    B -->|Approved seen at site 010| C[14 remain]
-    C -->|Pending not seen at site 009| D[Still 14]
-    D -->|Researcher approves comparable absence| E[7 remain]
-    E -->|Withdraw that approval| C
-```
+For **citizens**, this offers a way to contribute without needing ecological terminology or an account, and to check the status of their report afterward.
 
-Seeing a signal keeps possible sources upstream of the observation site, including its own stretch. A comparable not-seen observation excludes that upstream set. Pending reports have no effect.
+For **researchers and field teams**, it brings observations, review decisions, and investigation planning into one place. The intended benefit is to spend limited field effort on checks that reveal more, while keeping the reasoning visible.
 
-A **reach** is one stream stretch in the model. Seven candidates means seven stretches still fit the evidence, not seven equally likely sources, a measured distance, or a confirmed pollution source.
+For **communities and freshwater ecosystems**, the longer-term hope is earlier, better-informed follow-up on environmental concerns. Healthy waterways connect aquatic life, the surrounding environment, and human well-being. StreamTrace contributes to the investigation step in that One Health picture.
 
-### Why this next site?
+Those environmental and health benefits still need field validation. The prototype demonstrates the workflow; it has not measured improved water quality, reduced exposure, or restored biodiversity.
 
-The engine compares what would remain if a signal were seen or not seen at each eligible site. It chooses the site whose larger possible result is smallest, so either answer could be useful. This is **balanced bisection**.
+## Our OneAquaHealth connection
 
-For the initial 35-stretch Coimbra graph, site **009** splits the candidates into **18 / 17**. Site **011**, at the outlet, splits them into **35 / 0**, which cannot separate the candidates. The recommendation is about learning from the next observation. It is not a contamination probability or a guarantee of halving the search every time.
+StreamTrace aligns primarily with **Track 2: Data-to-Insight**, with guided citizen reporting and human-reviewed AI support contributing to Tracks 1 and 3.
 
-## What we can demonstrate
+There is also a small, working data integration. In the **Live Portal**, you can load [conductivity samples published in the OneAquaHealth FHIR repository](https://github.com/hl7-eu/oah/blob/b907cf0869b59d82d9138b3d147fca66f333d911/_samples/crete/ec.csv). StreamTrace shows the original Crete site identifiers, sampling dates, instrument, and units, then calculates the change between sampling dates. Every result links back to its source.
 
-The [reproducible benchmark](benchmarks/RESULTS.md) compares bisection with random and ascending-site checks on three **synthetic** networks. These are mean checks to reach a single candidate in the clean-observation scenario:
+These are historical reference samples from Giofyros and Almyros, separate from the Coimbra investigation. They demonstrate turning OneAquaHealth data into a readable insight, without treating conductivity as proof of pollution or water safety. This integration uses the public dataset, rather than a private citizen-app API.
 
-| Synthetic network | StreamTrace bisection | Random checks | Ascending-site checks |
-| --- | ---: | ---: | ---: |
-| Chain, 24 reaches | 4.67 | 16.48 | 12.46 |
-| Balanced, 30 reaches | 5.07 | 19.10 | 19.97 |
-| Uneven, 24 reaches | 4.71 | 16.02 | 14.46 |
+## What the prototype shows
 
-Fixed seed `20261003`; every origin is tested, with 50 random trials per origin. Under these idealised conditions, bisection uses fewer checks than either baseline. **These results do not measure field travel time, water quality or health outcomes.**
+The interactive demo follows a bounded stream network near **Coimbra, Portugal**, built from OpenStreetMap data. It starts with **35 possible source stretches**. Simulated approved observations narrow that to **14**. Approving a pending, comparable absence reduces it to **7**; withdrawing that approval restores the previous result.
 
-The same benchmark also tests missing and erroneous observations. Missing checks can leave a case unresolved. Flipping the first answer gives bisection a wrong single candidate in every tested origin, without a conflict. This is why researcher review and model assumptions matter: a precise-looking result can still be wrong.
+That is a smaller area to investigate, not a confirmed pollution source.
 
-A field pilot should measure checks and travel time against a baseline, report-to-review time, unresolved/conflicting cases, and agreement with independent investigation or sampling. Environmental and health benefits need separate outcome evidence.
+In [reproducible tests on three synthetic networks](benchmarks/RESULTS.md), the site-selection approach needed about **5 checks** on average to reach one candidate, compared with **16–19** for random checks under clean-observation conditions. These are model results, not measured savings in field time. Incorrect observations can still lead to an incorrect answer, which is why review matters.
 
-## Inside the prototype
+The main design challenge is trust. A clear-looking map can be misleading if its inputs or assumptions are wrong. Reports remain separate from approvals, decisions can be reversed, and AI does not control the investigation logic. The model assumes one persistent source, normal downstream flow, and comparable observations. Flow direction and site access still need expert and field verification.
 
-```mermaid
-flowchart TD
-    UI[React and TypeScript website] --> API[Hono API: validation and reviewer sessions]
-    API --> DB[(Neon PostgreSQL: reports, reviews and history)]
-    DB --> E[Trusted approved evidence + cached stream graph]
-    E --> ENGINE[Deterministic TypeScript engine]
-    ENGINE --> RESULT[Candidate stretches, explanations and next site]
-    RESULT --> UI
-    API -. Optional text assistance .-> AI[Groq drafts and task wording / Sarvam transcription]
-    AI -. Suggestions require human confirmation .-> UI
-```
+## Try it
 
-- **Evidence stays human-reviewed.** Signed reviewer sessions and database row-level security control access. The engine uses trusted review records, not client-supplied approvals or AI confidence.
-- **The map is reproducible.** The cached OpenStreetMap study graph covers a bounded Rio Mondego section near Coimbra, Portugal: 35 reaches and 11 prototype sites. Connections use shared OSM nodes; geometric crossings do not create connections. Data attribution: OpenStreetMap contributors, ODbL.
-- **AI assists with communication.** Optional drafting and task wording use guarded outputs and deterministic fallbacks. Voice transcription is optional. The engine works independently of AI.
-- **Results can be inspected.** Map, connection diagram and text list show the same investigation. Reviewer exports include JSON and a base FHIR R4 Bundle; no clinical profile certification is claimed.
-
-The model assumes one persistent origin region, normal downstream propagation and comparable observations. Flow direction was checked visually for the prototype, not by hydrology experts. Site access is assumed for demonstration and has not been verified in the field. The bounded graph does not cover every possible upstream source.
-
-**StreamTrace supports investigation planning; it does not identify chemicals or certify water safety.** Stay on safe public paths, do not enter the water, and skip unsafe observations.
-
-## Try it locally
-
-Use **Node 22.18+** for the TypeScript backend and scripts.
+Use **Node 22.18+**:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open the URL printed by Vite, normally `http://localhost:5173`.
+Open the local URL printed by Vite.
 
-| Page | What to try |
-| --- | --- |
-| `/docs` | Read the impact, workflow, worked example and system guide |
-| `/play` | Follow the guided simulated investigation; optional wording assistance may contact the API |
-| `/demo` | Explore the browser-only reviewer demo, approve the pending report, withdraw it and load a conflict; no API or map-tile requests |
-| `/workflow` | Open the live citizen or researcher portal |
-| `/report?mode=live` | Submit a real observation when the backend is configured |
-| `/login` | Sign in as an allowlisted reviewer and open the live queue |
+- **`/play`**: follow the guided simulated investigation.
+- **`/demo`**: explore the reviewer demo, approve a report, undo it, and try conflicting evidence. No account or database needed.
+- **`/workflow`**: open the live citizen/reviewer portal and load the OneAquaHealth sample dataset. These features require the backend.
 
-The demo needs no database, account or provider key. Simulated reports never enter the live queue. Live errors offer retry or an explicit simulation choice.
+For real reporting and the dataset integration, follow the [backend setup guide](docs/technical-reference.md#node-backend-and-neon). Simulation is explicitly labelled and never silently replaces a failed live request.
 
-### Connect the live system
+## What comes next
 
-Copy `.env.example` to the ignored `.env`. Configure a Neon PostgreSQL database, separate owner and restricted runtime credentials, `APP_LOGIN_PASSWORD`, `JWT_SECRET`, the frontend `CORS_ORIGIN` and reviewer email/password arrays. Remove unused optional placeholders. Local defaults are API port `3000` and frontend origin `http://localhost:5173`. Keep credentials server-side.
+The next meaningful step is a field pilot with researchers and community volunteers: verify the network and safe observation sites, compare suggested checks against a baseline, and measure how quickly reports become useful follow-up. An authorized citizen-app export or API would allow a deeper OneAquaHealth connection.
 
-On your intended development database, run:
+**StreamTrace supports investigation planning. It does not identify chemicals or certify water safety.**
 
-```sh
-npm run migrate
-npm run check:runtime
-npm run setup:citizen -- --confirm
-npm run seed:reviewers -- --confirm
-npm run api
-# In another terminal:
-npm run dev
-```
-
-Setup creates the cached sites and five signal cases, not observations or approvals. See the [technical reference](docs/technical-reference.md) for environment variables, API contracts, deployment, privacy, data provenance and AI limits.
-
-## Verify and explore
-
-```sh
-npm run typecheck
-npm test
-npm run build
-npm run benchmark
-```
-
-The benchmark regenerates its result files. Database integration and RLS tests require a separate disposable `TEST_DATABASE_URL`; integration coverage is skipped when it is absent. Keep test databases separate from live data. Provider, browser and field checks are distinct from automated tests.
-
-| Reference | Contents |
-| --- | --- |
-| [Technical reference](docs/technical-reference.md) | Engine rules, setup, API, authorization, map provenance and AI contracts |
-| [Benchmark results](benchmarks/RESULTS.md) | Clean, missing and erroneous observations with reproducible methodology |
-| [AI evaluation](ai_eval_results.md) | Small development-set results with provider/fallback boundaries |
-| [Adversarial review](ADVERSARIAL_REVIEW.md) | Model risks and interpretation limits |
+For implementation and evidence, see the [technical reference](docs/technical-reference.md), [benchmark results](benchmarks/RESULTS.md), and [FHIR export notes](docs/fhir/README.md). Map attribution: © OpenStreetMap contributors, ODbL.

@@ -1,4 +1,5 @@
 import { Link, setDemoMode } from "../citizen/navigation.tsx";
+import { OneAquaHealth } from "./OneAquaHealth.tsx";
 
 export function Workflow() {
   return (
@@ -72,6 +73,7 @@ export function Workflow() {
         </article>
 
       </div>
+      <OneAquaHealth/>
     </main>
   );
 }
