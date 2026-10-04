@@ -58,6 +58,18 @@ The main design challenge is trust. A clear-looking map can be misleading if its
 
 ## Try it
 
+### With Docker (Full Stack)
+
+To run the entire application (Database, API, and Frontend) without a local Node.js setup, use Docker Compose. This automatically runs database migrations and stands up the complete stack:
+
+```sh
+docker compose up -d --build
+```
+
+The application will be available at `http://localhost:8080`.
+
+### Local Development
+
 Use **Node 22.18+**:
 
 ```sh

@@ -5,7 +5,9 @@ RUN npm ci --omit=dev
 COPY api ./api
 COPY engine ./engine
 COPY shared ./shared
-COPY data/coimbra.network.json ./data/coimbra.network.json
+COPY data ./data
+COPY db ./db
+COPY scripts ./scripts
 ENV NODE_ENV=production
 ENV PORT=3000
 EXPOSE 3000

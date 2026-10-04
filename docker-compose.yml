@@ -1,18 +1,47 @@
+version: '3.8'
+
 services:
-  test-db:
-    build:
-      context: .
-      dockerfile: db/Dockerfile.test
+  db:
+    image: postgres:16-alpine
     environment:
-      POSTGRES_DB: streamtrace_test
-      POSTGRES_USER: test_owner
-      POSTGRES_PASSWORD: ${TEST_POSTGRES_PASSWORD:?Set TEST_POSTGRES_PASSWORD for the disposable test database}
+      POSTGRES_PASSWORD: password
     ports:
-      - "127.0.0.1:55432:5432"
-    tmpfs:
-      - /var/lib/postgresql/data
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U test_owner -d streamtrace_test"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 2s
       timeout: 3s
       retries: 30
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL_ADMIN: postgresql://postgres:password@db:5432/postgres?sslmode=disable
+      DATABASE_URL: postgresql://app_login:app_password123456789012345678@db:5432/postgres?sslmode=disable
+      APP_LOGIN_PASSWORD: app_password123456789012345678
+      JWT_SECRET: super_secret_jwt_key_that_is_at_least_32_chars_long
+      CORS_ORIGIN: http://localhost:8080
+      PORT: 3000
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "npm run migrate && node --experimental-strip-types api/server.ts"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  db-data:
