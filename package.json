@@ -38,7 +38,7 @@
     "vitest": "4.1.9"
   },
   "engines": {
-    "node": ">=22.18"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.3",

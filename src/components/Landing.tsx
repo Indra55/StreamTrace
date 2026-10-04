@@ -79,9 +79,9 @@ export function Landing() {
       <div className="hero-copy">
         <p className="landing-intro">Citizens report what they see in a stream. Researchers review it, and StreamTrace shows which stretches could be the source and where to look next.</p>
         <div className="landing-actions">
-          <Link className="primary-action" href="/demo">Open the interactive demo <span aria-hidden="true">↗</span></Link>
-          <Link className="secondary-action" href="/report" onClick={() => setDemoMode(false)}>Report what you see</Link>
-          <Link className="tertiary-action" href="/play">Follow the foam: a four-minute mission</Link>
+          <Link className="primary-action" href="/play">Begin the guided investigation <span aria-hidden="true">↗</span></Link>
+          <Link className="secondary-action" href="/demo">Open the interactive demo</Link>
+          <Link className="tertiary-action" href="/report" onClick={() => setDemoMode(false)}>Report what you see</Link>
           <Link className="tertiary-action" href="/login">Reviewer sign in</Link>
         </div>
         <div className="hero-field-note"><span className="eyebrow">Pilot field atlas</span><strong>Coimbra, Portugal</strong><p>Follow a visible signal upstream. Use the evidence to plan the next check.</p></div>
@@ -121,6 +121,13 @@ export function Landing() {
     <section className="landing-modes landing-section" aria-labelledby="modes-title">
       <div className="section-heading"><p className="section-index">05 / Getting started</p><h2 id="modes-title">Explore the idea. Or work on a live case.</h2></div>
       <div className="mode-comparison"><article><span className="mode-chip">Demo (simulated)</span><h3>Try the whole investigation loop.</h3><p>No login needed. Approve a simulated report, see the map change, open the next site, and explore conflicting evidence. Reset whenever you like. Nothing is sent to the live system.</p></article><article><span className="mode-chip mode-live">Live</span><h3>Submit and review real observations.</h3><p>Citizens can report without an account. Researchers sign in to review stored reports, inspect the map and case history, and plan the next check. Only approved evidence affects the search.</p></article></div>
+    </section>
+
+    <section className="mission-section landing-section" aria-labelledby="mission-section-title" style={{ background: "rgba(36, 52, 59, 0.03)", padding: "60px 40px", borderRadius: "20px", marginTop: "40px" }}>
+      <div className="section-heading"><p className="section-index">06 / Experience</p><h2 id="mission-section-title">Interactive Case Study</h2><p>Experience the complete investigation workflow in a guided, four-minute simulation. You will step into the roles of both a citizen reporting an anomaly and a researcher verifying evidence to narrow the search radius.</p></div>
+      <div style={{ marginTop: "30px" }}>
+        <Link className="primary-action" href="/play">Launch the scenario <span aria-hidden="true">↗</span></Link>
+      </div>
     </section>
 
     <footer className="landing-footer"><span className="footer-mark">StreamTrace<span>Coimbra field atlas</span></span><p className="landing-trust">Built for the OneAquaHealth IEEE Hackathon. Pilot area: Coimbra, Portugal. Demo data is simulated. Supports investigation planning. Does not identify chemicals or certify water safety.</p></footer>
