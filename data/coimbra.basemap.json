@@ -1,0 +1,20 @@
+{
+  "bounds": [
+    [
+      40.174,
+      -8.403
+    ],
+    [
+      40.242,
+      -8.326
+    ]
+  ],
+  "source": "OpenStreetMap contributors",
+  "license": "ODbL-1.0",
+  "license_url": "https://www.openstreetmap.org/copyright",
+  "osm_base_timestamp": "2026-10-04",
+  "cache_sha256": "1f988d286728cda9e4f003fe0e4c73754b5bf8c26eb58591e79fc3c9dd7cbf2f",
+  "query_file": "coimbra.map-context.query",
+  "renderer": "scripts/render-basemap.ts",
+  "features": 1576
+}

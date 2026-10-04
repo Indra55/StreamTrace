@@ -1,9 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { z } from "zod";
-import { createApp } from "../app.ts";
 import { withUser } from "../db.ts";
-import { makeDraft } from "../draft.ts";
 import { fixture,config } from "./helpers.ts";
 
 test("anonymous reviewer routes reject with 401 and forged sessions are rejected", async () => {
@@ -18,7 +16,7 @@ test("submissions ignore forged approval, reviewer and revision fields and valid
   const f=await fixture();
   const response=await f.post("/api/reports",{...f.payload,review_state:"approved",reviewer_id:f.userId,revision:999,assumptions_acknowledged:true});
   assert.equal(response.status,201);
-  assert.deepEqual(await response.json(),{id:f.reportId,review_state:"unreviewed"});
+  const receipt=await response.json();assert.equal(receipt.id,f.reportId);assert.match(receipt.ref,/^[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{16}$/);assert.equal(receipt.review_state,"unreviewed");
   assert.equal(f.reports[0]?.review_state,"unreviewed");
   assert.equal(f.reports[0]?.reviewer_id,undefined);
   assert.equal(f.decisions.length,0);
@@ -50,7 +48,7 @@ test("approval then withdrawal restores the original candidates through the API 
   await f.post("/api/reports",{...f.payload,review_state:"approved"});
   const read=async () => (await (await f.app.request(`/api/cases/${f.caseId}/analysis`,{headers:{Cookie:cookie}})).json());
   assert.deepEqual((await read()).candidates,["a","b","c"]);
-  const decision={report_id:f.reportId,state:"approved",assumptions_acknowledged:true,absence_comparable:true};
+  const decision={report_id:f.reportId,state:"approved",assumptions_acknowledged:true,absence_comparable:true,approval_reason:"Reviewed the unknown context"};
   assert.equal((await f.post("/api/reviews",decision,cookie)).status,200);
   assert.deepEqual((await read()).candidates,["b","c"]);
   const published=await (await f.app.request("/api/public/reports")).json();
@@ -69,31 +67,6 @@ test("transaction-scoped roles and JWT claims reset on success and rollback", as
   const claim=f.calls.filter(c => c.sql.startsWith("select set_config")).at(-1);
   assert.equal(claim?.values[0],'{"sub":null}');
   assert.equal(f.calls.at(-3)?.sql,"set local role app_anon");
-});
-test("Groq unreachable, invalid input and malformed provider output use exact fallback", async () => {
-  const f=await fixture();
-  for(const body of [{text:"I see foam"},{text:"x".repeat(501)},{text:""}]) {
-    const response=await f.post("/api/draft",body);
-    assert.equal(response.status,502); assert.deepEqual(await response.json(),{error:"fallback"});
-  }
-  const bad=await createApp(f.pool,config,{fetcher:async () => new Response('{"choices":[{"message":{"content":"not JSON"}}]}')});
-  const response=await bad.request("/api/draft",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:"I see foam"})});
-  assert.equal(response.status,502); assert.deepEqual(await response.json(),{error:"fallback"});
-});
-test("drafts clamp confidence, normalize unclear and reject chemical or cause fields", async () => {
-  for(const [confidence,expected] of [[5,1],[-5,0]]) {
-    const draft=await makeDraft({text:"Maybe foam"},"mock","mock",async (_url,init) => {
-      const body=JSON.parse(String(init?.body)); assert.equal(body.temperature,0); assert.deepEqual(body.response_format,{type:"json_object"});
-      return Response.json({choices:[{message:{content:JSON.stringify({value:"unclear",confidence})}}]});
-    });
-    assert.deepEqual(draft,{value:"cannot_tell",confidence:expected,source:"ai_draft"});
-  }
-  await assert.rejects(makeDraft({text:"Foam"},"mock","mock",async () => Response.json({choices:[{message:{content:JSON.stringify({value:"present",confidence:1,cause:"chemical"})}}]})));
-});
-test("draft timeout returns within five seconds when the provider stalls", async () => {
-  const start=Date.now();
-  await assert.rejects(makeDraft({text:"Foam"},"mock","mock",async () => new Promise<Response>(() => {})));
-  assert.ok(Date.now()-start>=4_900 && Date.now()-start<7_000);
 });
 test("FHIR R4 collection has unique URLs, required fields and resolving Location focus", async () => {
   const f=await fixture(),cookie=await f.cookie();

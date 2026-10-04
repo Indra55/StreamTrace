@@ -41,7 +41,7 @@ test("real database reviewer lifecycle, RLS and startup role rejection", {skip:!
     assert.equal(state.review_state,"unreviewed");
     const read=async ()=>(await(await app.request(`/api/cases/${caseId}/analysis`,{headers:{Cookie:cookie}})).json());
     assert.deepEqual((await read()).candidates,["a","b","c"]);
-    assert.equal((await post("/api/reviews",{report_id:reportId,state:"approved",assumptions_acknowledged:true,absence_comparable:true},cookie)).status,200);
+    assert.equal((await post("/api/reviews",{report_id:reportId,state:"approved",assumptions_acknowledged:true,absence_comparable:true,approval_reason:"Checked the unknown context"},cookie)).status,200);
     assert.deepEqual((await read()).candidates,["b","c"]);
     assert.equal((await post("/api/reviews",{report_id:reportId,state:"unreviewed",assumptions_acknowledged:false,absence_comparable:false},cookie)).status,200);
     assert.deepEqual((await read()).candidates,["a","b","c"]);

@@ -90,10 +90,12 @@ select pg_temp.check_true((select count(*)=0 from public.review_events),'nonrevi
 select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000001"}',true);
 select pg_temp.invalid($q$insert into public.review_decisions(report_id,state,assumptions_acknowledged,absence_comparable) values ('20000000-0000-0000-0000-000000000001','approved',false,true)$q$);
 select pg_temp.invalid($q$insert into public.review_decisions(report_id,state,assumptions_acknowledged,absence_comparable) values ('20000000-0000-0000-0000-000000000001','approved',true,false)$q$);
-select public.review_report('20000000-0000-0000-0000-000000000001','approved',true,true);
+select pg_temp.invalid($q$select public.review_report('20000000-0000-0000-0000-000000000001','approved',true,true,'too short')$q$);
+select public.review_report('20000000-0000-0000-0000-000000000001','approved',true,true,'Checked the unknown context');
 select pg_temp.check_true((select revision=1 and reviewer_id=auth.uid() from public.review_decisions),'server assigns identity and revision');
-select public.review_report('20000000-0000-0000-0000-000000000001','approved',true,true);
+select public.review_report('20000000-0000-0000-0000-000000000001','approved',true,true,'Checked the unknown context');
 select pg_temp.check_true((select count(*)=1 from public.review_events),'identical approval is idempotent');
+select pg_temp.check_true((select approval_reason='Checked the unknown context' from public.review_events),'unknown-context reason is audited');
 select pg_temp.check_true((select count(*)=2 from public.reports),'reviewer can read private reports');
 reset role;
 set local role app_anon;

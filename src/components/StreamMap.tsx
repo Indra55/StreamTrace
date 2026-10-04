@@ -1,9 +1,12 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import basemap from "../assets/coimbra-basemap.svg?inline";
+import basemapMetadata from "../../data/coimbra.basemap.json";
 import type { InvestigationResult } from "../../engine/index.ts";
 import { siteSummary, type DemoState, type Network } from "../demo.ts";
 interface Props {
+  offline?: boolean;
   data: Network;
   result: InvestigationResult;
   state: DemoState;
@@ -13,6 +16,7 @@ interface Props {
 }
 export function StreamMap({
   data,
+  offline=false,
   result,
   state,
   reducedMotion,
@@ -37,15 +41,24 @@ export function StreamMap({
     if (!host.current) return;
     const instance = L.map(host.current, {
       zoomControl: true,
-        maxZoom: 19,
+      maxZoom: 19,
+      zoomSnap: 0.25,
       scrollWheelZoom: false,
       zoomAnimation: !reducedMotion,
       fadeAnimation: !reducedMotion,
       markerZoomAnimation: !reducedMotion,
     }).fitBounds(boundsRef.current, { padding: [28, 28] });
     map.current = instance;
+    // Bundled geographic context stays available without any tile requests.
+    instance.createPane("bundled-basemap").style.zIndex = "190";
+    L.imageOverlay(basemap, basemapMetadata.bounds as L.LatLngBoundsExpression, {
+      pane: "bundled-basemap",
+      interactive: false,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+      alt: "Study-area roads, waterways and place names",
+    }).addTo(instance);
     layers.current = L.layerGroup().addTo(instance);
-    const tiles = L.tileLayer(
+    const tiles = offline ? null : L.tileLayer(
       "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
         attribution:
@@ -57,7 +70,7 @@ export function StreamMap({
       },
     ).addTo(instance);
     let failed = false;
-    tiles.on("tileerror", () => {
+    tiles?.on("tileerror", () => {
       if (!failed) {
         failed = true;
         failure.current();
@@ -86,7 +99,7 @@ export function StreamMap({
       map.current = null;
       layers.current = null;
     };
-  }, [data, reducedMotion]);
+  }, [data, reducedMotion, offline]);
   useEffect(() => {
     const layer = layers.current;
     if (!layer) return;
@@ -171,7 +184,7 @@ export function StreamMap({
         Fit study area
       </button>
       <div className="map-caption">
-        Coimbra, Portugal <span>Provisional OSM flow direction</span>
+        Coimbra, Portugal <span>{offline ? "Bundled study-area map" : "Provisional OSM flow direction"}</span>
       </div>
     </div>
   );

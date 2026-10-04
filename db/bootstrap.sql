@@ -58,9 +58,20 @@ begin
     not new.assumptions_acknowledged or
     exists(select 1 from public.reports where id = new.report_id and value = 'absent' and not new.absence_comparable)
   ) then raise exception 'Approval requires acknowledged assumptions and comparable absence'; end if;
+  if new.state = 'approved' and exists(select 1 from public.reports where id = new.report_id and case_id is null)
+    then raise exception 'General inbox reports cannot become case evidence'; end if;
+  if new.state = 'approved' and exists(
+    select 1 from public.reports where id = new.report_id and value = 'absent' and not (
+      coalesce((citizen_context->'assumptions'->'persistence') in ('true'::jsonb,'false'::jsonb),false) and
+      coalesce((citizen_context->'assumptions'->'detectability') in ('true'::jsonb,'false'::jsonb),false) and
+      coalesce((citizen_context->'assumptions'->'flow') in ('true'::jsonb,'false'::jsonb),false) and
+      coalesce(citizen_context->'assumptions'->>'recent_rain' in ('yes','no'),false)
+    )
+  ) and length(btrim(new.approval_reason)) < 10
+    then raise exception 'Approval with unknown context requires a reason of at least 10 characters'; end if;
   -- Retries of an identical decision are no-ops, including audit history.
-  if TG_OP = 'UPDATE' and (new.state,new.assumptions_acknowledged,new.absence_comparable)
-    is not distinct from (old.state,old.assumptions_acknowledged,old.absence_comparable) then return null; end if;
+  if TG_OP = 'UPDATE' and (new.state,new.assumptions_acknowledged,new.absence_comparable,new.approval_reason)
+    is not distinct from (old.state,old.assumptions_acknowledged,old.absence_comparable,old.approval_reason) then return null; end if;
   new.reviewer_id := auth.uid();
   new.revision := case when TG_OP = 'INSERT' then 1 else old.revision + 1 end;
   new.updated_at := clock_timestamp();
@@ -70,7 +81,8 @@ $$;
 create or replace function private.audit_review() returns trigger
 language plpgsql security definer set search_path = '' as $$
 begin
-  insert into public.review_events values(new.report_id,new.revision,new.state,new.assumptions_acknowledged,new.absence_comparable,new.reviewer_id,new.updated_at);
+  insert into public.review_events(report_id,revision,state,assumptions_acknowledged,absence_comparable,reviewer_id,created_at,approval_reason)
+  values(new.report_id,new.revision,new.state,new.assumptions_acknowledged,new.absence_comparable,new.reviewer_id,new.updated_at,new.approval_reason);
   return new;
 end;
 $$;
@@ -92,8 +104,8 @@ drop policy if exists change_decisions on public.review_decisions;
 drop policy if exists read_events on public.review_events;
 grant select on public.cases, public.sites to app_anon, app_authenticated;
 grant select on public.reports, public.review_decisions, public.review_events to app_authenticated;
-grant insert(id,case_id,signal,site_code,value,confirmed,origin,observed_at,notes,review_state) on public.reports to app_anon, app_authenticated;
-grant insert(report_id,state,assumptions_acknowledged,absence_comparable), update(state,assumptions_acknowledged,absence_comparable)
+grant insert(id,case_id,signal,site_code,value,confirmed,origin,observed_at,notes,review_state,ref) on public.reports to app_anon, app_authenticated;
+grant insert(report_id,state,assumptions_acknowledged,absence_comparable,approval_reason), update(state,assumptions_acknowledged,absence_comparable,approval_reason)
   on public.review_decisions to app_authenticated;
 create policy read_cases on public.cases for select to app_anon, app_authenticated using(true);
 create policy read_sites on public.sites for select to app_anon, app_authenticated using(true);
@@ -122,18 +134,24 @@ create or replace view public.public_reports with (security_barrier = true, secu
   select r.id, r.case_id, r.site_code as site_id, r.signal, r.value, r.observed_at as observed_on
   from public.reports r
   join public.review_decisions d on d.report_id = r.id
-  where d.state = 'approved';
+  where d.state = 'approved' and r.case_id is not null;
 revoke all on public.public_reports from public, app_anon, app_authenticated;
 grant select on public.public_reports to app_anon, app_authenticated;
 
 -- Atomic upsert serializes concurrent decisions on the report primary key.
-create or replace function public.review_report(p_report_id uuid, p_state text, p_assumptions boolean, p_comparable boolean)
+create or replace function public.review_report(p_report_id uuid, p_state text, p_assumptions boolean, p_comparable boolean, p_reason text)
 returns void language sql security invoker set search_path = '' as $$
-  insert into public.review_decisions(report_id,state,assumptions_acknowledged,absence_comparable)
-  values(p_report_id,p_state,p_assumptions,p_comparable)
+  insert into public.review_decisions(report_id,state,assumptions_acknowledged,absence_comparable,approval_reason)
+  values(p_report_id,p_state,p_assumptions,p_comparable,p_reason)
   on conflict(report_id) do update set state=excluded.state,
     assumptions_acknowledged=excluded.assumptions_acknowledged,
-    absence_comparable=excluded.absence_comparable;
+    absence_comparable=excluded.absence_comparable,approval_reason=excluded.approval_reason;
 $$;
-revoke all on function public.review_report(uuid,text,boolean,boolean) from public, app_anon;
-grant execute on function public.review_report(uuid,text,boolean,boolean) to app_authenticated;
+create or replace function public.review_report(p_report_id uuid, p_state text, p_assumptions boolean, p_comparable boolean)
+returns void language sql security invoker set search_path = '' as $$
+  select public.review_report(p_report_id,p_state,p_assumptions,p_comparable,'');
+$$;
+revoke all on function public.review_report(uuid,text,boolean,boolean), public.review_report(uuid,text,boolean,boolean,text) from public, app_anon;
+grant execute on function public.review_report(uuid,text,boolean,boolean), public.review_report(uuid,text,boolean,boolean,text) to app_authenticated;
+grant execute on function public.report_status(text), private.new_report_ref() to app_anon, app_authenticated;
+grant insert(citizen_context) on public.reports to app_anon, app_authenticated;

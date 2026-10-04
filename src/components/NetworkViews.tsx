@@ -18,7 +18,7 @@ export function NetworkList({ data, result, state, onSelect }: Props) {
   return (
     <div className="list-view">
       <p className="view-note">
-        The full study network. Select a site to add a simulated observation.
+        The full study network. Select a site to record an observation.
       </p>
       <h3>Observation sites</h3>
       <ul className="site-list">

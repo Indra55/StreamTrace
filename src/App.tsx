@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import {
   type Action,
   type DemoState,
@@ -10,29 +10,82 @@ import {
   siteSummary,
   valueText,
 } from "./demo.ts";
-import type { Value } from "../engine/index.ts";
+import Routes from "./Routes.tsx";
+import { useDemoState,demoDispatch,getDemoInbox } from "./citizen/demo-store.ts";
+import type { InvestigationResult, Value } from "../engine/index.ts";
 import { useReducedMotion } from "./useReducedMotion.ts";
 import { StreamMap } from "./components/StreamMap.tsx";
 import { NetworkDiagram, NetworkList } from "./components/NetworkViews.tsx";
+import { Link } from "./citizen/navigation.tsx";
+import { contextLabels, contextText, unknownContext } from "../shared/observations.ts";
+import { GeneralInbox } from "./components/GeneralInbox.tsx";
+import type { InboxReport } from "./api.ts";
+import { GuidedTour } from "./components/GuidedTour.tsx";
+import { VolunteerOutreach } from "./components/VolunteerOutreach.tsx";
 
 type View = "Map" | "List" | "Diagram";
 const views: View[] = ["Map", "List", "Diagram"];
 const now = () => new Date().toISOString();
 interface Props {
+  shared?: boolean;
   data?: Network;
   initialView?: View;
 }
-export default function App({ data = network, initialView = "Map" }: Props) {
-  const [state, setState] = useState(() => seed(data, now()));
+export default Routes;
+export function DemoApp({ data = network, initialView = "Map", shared=false }: Props) {
+  const [local, setState] = useState(() => seed(data, now()));
+  const sharedState=useDemoState();
+  const state=shared ? sharedState : local;
+  return <Atlas data={data} initialView={initialView} state={state} result={evaluate(state,data)}
+    generalInbox={shared ? getDemoInbox() : []}
+    dispatch={action=>shared ? demoDispatch(action) : setState(current=>transition(current,action,data))} offline />;
+}
+interface LiveControls {
+  inbox: InboxReport[];
+  header: ReactNode;
+  signal: string;
+  pending: boolean;
+  error: string;
+  onDraft: (text: string) => Promise<{ value: Value; confidence: number } | null>;
+  onExport: (format: "json" | "fhir") => Promise<void>;
+}
+export function Atlas({ data, initialView = "Map", state, result, dispatch, live, generalInbox=[], offline=false }: Props & {
+  data: Network; state: DemoState; result: InvestigationResult; generalInbox?: InboxReport[];
+  dispatch: (action: Action) => void | Promise<void>; live?: LiveControls; offline?: boolean;
+}) {
   const [view, setView] = useState<View>(initialView);
   const [selected, setSelected] = useState<string | null>(null);
   const [tileFailure, setTileFailure] = useState(false);
   const reducedMotion = useReducedMotion();
-  const result = evaluate(state, data);
-  const dispatch = (action: Action) =>
-    setState((current) => transition(current, action, data));
-  const reviewer = useRef<HTMLElement>(null);
-  const select = (code: string) => setSelected(code);
+  const [liveTab, setLiveTab] = useState("Queue");
+  const [readReport, setReadReport] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [openedNext, setOpenedNext] = useState(false);
+  const [tourTarget, setTourTarget] = useState<number | null>(null);
+  const [resetKey, setResetKey] = useState(0);
+  const approved = state.decisions.find(d => d.report_id === "seed-3")?.state === "approved";
+  const narrowed = approved && result.candidates.length < evaluate(seed(data, ""), data).candidates.length;
+  const tourComplete = [readReport, approved, narrowed, openedNext];
+  const select = (code: string) => {
+    setSelected(code);
+    if (narrowed && code === result.recommendation?.siteCode) setOpenedNext(true);
+  };
+  function focusTour(step: number) {
+    setTourTarget(step);
+    if (step < 2) { setReadReport(true); setReportOpen(true); }
+    if (step === 2) setView("Map");
+    setTimeout(() => {
+      const id = ["pending-report", "pending-checks", "network-view", "recommended-site", "load-conflict"][step]!;
+      const element = document.getElementById(id);
+      const control = step === 1 ? element?.querySelector<HTMLInputElement>("input") : element;
+      control?.focus();
+      control?.scrollIntoView({ block: "center" });
+    }, 0);
+  }
+  function reset() {
+    void dispatch({ type: "reset", at: now() });
+    setSelected(null); setReadReport(false); setReportOpen(false); setOpenedNext(false); setTourTarget(null); setResetKey(key => key + 1);
+  }
   const status =
     result.status === "conflict"
       ? "Conflict"
@@ -58,46 +111,51 @@ export default function App({ data = network, initialView = "Map" }: Props) {
   }
   return (
     <>
-      <a className="skip-link" href="#case-panel">
-        Skip to case review
-      </a>
-      <header className="masthead">
-        <a className="wordmark" href="#">
-          StreamTrace<span>Field atlas / Coimbra</span>
-        </a>
-        <button
-          className="reviewer-entry"
-          onClick={() => {
-            reviewer.current?.focus();
-            reviewer.current?.scrollIntoView({
-              behavior: "auto",
-              block: "start",
-            });
-          }}
-        >
-          Try as reviewer <span aria-hidden="true">↗</span>
-        </button>
-      </header>
-      <div className="prototype-banner" role="note">
+      {live?.header}
+      {!live && <div className="prototype-banner" role="note">
         <span className="banner-dot" aria-hidden="true" />
-        Prototype demo: simulated observations, not real reports
-      </div>
-      <main className="workspace">
-        <section className="atlas" aria-labelledby="atlas-title">
+        Demo mode: simulated data, nothing is saved or sent.
+      </div>}
+      <main id="main-content" tabIndex={-1} className={`workspace ${live ? "live-workspace" : "demo-workspace"}`}>
+        {live?.error && <p className="api-error" role="alert">{live.error}</p>}
+        {live?.pending && <p role="status">Saving and refreshing evidence...</p>}
+        {!live && <div className="demo-toolbar"><GuidedTour complete={tourComplete} conflicting={state.observations.some(r => r.id === "demo-conflict")} onStep={focusTour} onClose={() => setTourTarget(null)}/><button onClick={reset}>Reset demo</button></div>}
+        {live && <>
+          <div className="review-tabs" role="tablist" aria-label="Reviewer views">
+            {["Queue", "Map", "Case", "Outreach"].map((tab, i, tabs) => <button key={tab} id={`review-tab-${tab}`} role="tab" aria-selected={liveTab === tab} aria-controls={`review-panel-${tab}`} tabIndex={liveTab === tab ? 0 : -1} onClick={() => setLiveTab(tab)} onKeyDown={event => {
+              const index = event.key === "ArrowRight" ? (i + 1) % tabs.length : event.key === "ArrowLeft" ? (i + tabs.length - 1) % tabs.length : event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : null;
+              if (index !== null) { event.preventDefault(); setLiveTab(tabs[index]!); document.getElementById(`review-tab-${tabs[index]}`)?.focus(); }
+            }}>{tab}</button>)}
+          </div>
+          <section id="review-panel-Queue" role="tabpanel" aria-labelledby="review-tab-Queue" hidden={liveTab !== "Queue"} className="review-queue">
+            <p className="eyebrow">Reviewer area <span className="mode-chip mode-live">Live mode</span></p>
+            <h1>Review reports</h1>
+            <p className="queue-intro">Pending reports for the selected case. Check each observation before approving it.</p>
+            <h2>Pending reports</h2>
+            {state.observations.filter(r => state.decisions.find(d => d.report_id === r.id)?.state === "unreviewed").map(r => <Evidence key={r.id} observation={r} decision={state.decisions.find(d => d.report_id === r.id)!} dispatch={dispatch} live={live}/>)}
+            {!state.decisions.some(d => d.state === "unreviewed") && <p className="queue-intro">No pending reports in this case.</p>}
+            <GeneralInbox reports={live.inbox}/><details className="reviewed-reports"><summary>Reviewed reports</summary>{state.observations.filter(r => state.decisions.find(d => d.report_id === r.id)?.state !== "unreviewed").map(r => <Evidence key={r.id} observation={r} decision={state.decisions.find(d => d.report_id === r.id)!} dispatch={dispatch} live={live}/>)}</details>
+          </section>
+          <section id="review-panel-Outreach" role="tabpanel" aria-labelledby="review-tab-Outreach" hidden={liveTab !== "Outreach"}>
+            <VolunteerOutreach sites={data.sites} recommendedSite={result.recommendation?.siteCode}/>
+          </section>
+        </>}
+        <section id={live ? "review-panel-Map" : undefined} role={live ? "tabpanel" : undefined} hidden={!!live && liveTab !== "Map"} className={`atlas${tourTarget === 2 ? " tour-highlight" : ""}`} aria-labelledby={live ? "review-tab-Map" : "atlas-title"}>
           <div className="atlas-heading">
             <div>
               <p className="eyebrow">Study area 01 / Portugal</p>
-              <h1 id="atlas-title">Following the water.</h1>
+              {live ? <h2 id="atlas-title">Stream map</h2> : <h1 id="atlas-title">Interactive demo</h1>}
               <p className="atlas-subtitle">
                 Rio Mondego & its upstream branches
               </p>
             </div>
             <div className="atlas-index">
-              {data.reaches.length} reaches
+              <strong>{result.candidates.length} candidate reaches</strong>
               <br />
-              <span>{data.sites.length} observation sites</span>
+              <span>of {data.reaches.length} in this case</span>
             </div>
           </div>
+          <p className="map-explanation">Blue stretches could contain the source of this signal. Grey stretches are excluded by approved reports under the case assumptions. Select a numbered site to read or add an observation.</p>
           <div className="view-toolbar">
             <div role="tablist" aria-label="Network view">
               {views.map((v, i) => (
@@ -121,22 +179,23 @@ export default function App({ data = network, initialView = "Map" }: Props) {
           </div>
           {tileFailure && (
             <div className="tile-alert" role="status">
-              Background map tiles could not load. The network is still
-              available.{" "}
+              Online map tiles could not load. Showing the bundled study-area map.{" "}
               <button onClick={() => setView("Diagram")}>Use Diagram</button>
             </div>
           )}
           <div
             id="network-view"
+            tabIndex={-1}
             role="tabpanel"
             aria-labelledby={`tab-${view}`}
           >
-            {view === "Map" ? (
+            {view === "Map" ? (!live || liveTab === "Map") && (
               <StreamMap
                 data={data}
                 result={result}
                 state={state}
                 reducedMotion={reducedMotion}
+                offline={offline}
                 onSelect={select}
                 onTileFailure={() => setTileFailure(true)}
               />
@@ -183,6 +242,7 @@ export default function App({ data = network, initialView = "Map" }: Props) {
               state={state}
               dispatch={dispatch}
               onClose={() => setSelected(null)}
+              live={live}
             />
           )}
           <footer className="atlas-footer">
@@ -191,15 +251,16 @@ export default function App({ data = network, initialView = "Map" }: Props) {
           </footer>
         </section>
         <aside
-          id="case-panel"
-          className="case-panel"
+          id={live ? "review-panel-Case" : "case-panel"}
+          role={live ? "tabpanel" : undefined}
+          className={`case-panel${tourTarget === 2 ? " tour-count-highlight" : ""}`}
           tabIndex={-1}
-          ref={reviewer}
-          aria-labelledby="case-title"
+          aria-labelledby={live ? "review-tab-Case" : "case-title"}
+          hidden={!!live && liveTab !== "Case"}
         >
-          <p className="eyebrow">Reviewer sandbox / simulated case</p>
+          <p className="eyebrow">{live ? "Case overview" : "Simulated investigation"}</p>
           <div className="case-title-row">
-            <h2 id="case-title">Visible foam</h2>
+            <h2 id="case-title">{live ? live.signal : "Visible foam"}</h2>
             <span className={`status-tag status-${status.toLowerCase()}`}>
               {status}
             </span>
@@ -264,9 +325,10 @@ export default function App({ data = network, initialView = "Map" }: Props) {
                   {result.recommendation.absent.length}, if persistence and
                   detectability are confirmed.
                 </p>
-                <button onClick={() => select(result.recommendation!.siteCode)}>
+                <button id="recommended-site" className={tourTarget === 3 ? "tour-highlight" : undefined} onClick={() => select(result.recommendation!.siteCode)}>
                   Open recommended site
                 </button>
+                {!live && <Link className="next-task-link" href="/task?mode=demo">Open next field task</Link>}
               </>
             ) : (
               <>
@@ -294,22 +356,31 @@ export default function App({ data = network, initialView = "Map" }: Props) {
               detectability are acknowledged.
             </p>
           </details>
-          <div className="section-label">
+          {!live && <><div className="section-label">
             <h3>Observation review</h3>
             <span>{state.observations.length} records</span>
           </div>
-          <div className="evidence-list">
-            {state.observations.map((r) => (
+          <div className="evidence-list" key={resetKey}>
+            {state.observations.filter(r => r.id === "seed-3" || state.decisions.find(d => d.report_id === r.id)?.state === "unreviewed").map((r) => (
+              <details key={r.id} open={r.id === "seed-3" ? reportOpen : undefined} className={`pending-report${r.id === "seed-3" && (tourTarget === 0 || tourTarget === 1) ? " tour-highlight" : ""}`} onToggle={event => { if (r.id === "seed-3") { setReportOpen(event.currentTarget.open); if (event.currentTarget.open) setReadReport(true); } }}>
+                <summary id={r.id === "seed-3" ? "pending-report" : undefined}>Read {state.decisions.find(d => d.report_id === r.id)?.state === "unreviewed" ? "pending" : "reviewed"} citizen report at site {r.site_code}</summary>
+                <Evidence observation={r} decision={state.decisions.find(d => d.report_id === r.id)!} dispatch={dispatch} checksId={r.id === "seed-3" ? "pending-checks" : undefined}/>
+              </details>
+            ))}
+            {generalInbox.length>0&&<GeneralInbox reports={generalInbox}/>} <details className="reviewed-reports"><summary>Reviewed reports</summary>{state.observations.filter(r => r.id !== "seed-3" && state.decisions.find(d => d.report_id === r.id)?.state !== "unreviewed").map((r) => (
               <Evidence
                 key={r.id}
                 observation={r}
                 decision={state.decisions.find((d) => d.report_id === r.id)!}
                 dispatch={dispatch}
+                live={live}
               />
-            ))}
-          </div>
-          <div className="demo-actions">
+            ))}</details>
+          </div></>}
+          {!live && <div className="demo-actions">
             <button
+              id="load-conflict"
+              className={tourTarget === 4 ? "tour-highlight" : undefined}
               disabled={state.observations.some(
                 (r) => r.id === "demo-conflict",
               )}
@@ -317,16 +388,9 @@ export default function App({ data = network, initialView = "Map" }: Props) {
             >
               Load conflicting evidence
             </button>
-            <button
-              onClick={() => {
-                dispatch({ type: "reset", at: now() });
-                setSelected(null);
-              }}
-            >
-              Reset demo
-            </button>
-          </div>
-          <details className="history" open>
+          </div>}
+          {live && <div className="demo-actions"><button disabled={live.pending} onClick={()=>void live.onExport("json")}>Export JSON</button><button disabled={live.pending} onClick={()=>void live.onExport("fhir")}>Export FHIR</button></div>}
+          <details className="history">
             <summary>
               Evidence history <span>{state.history.length} changes</span>
             </summary>
@@ -338,9 +402,9 @@ export default function App({ data = network, initialView = "Map" }: Props) {
                   </time>
                   <p>
                     {h.text}
-                    <small>
+                    {!live && <small>
                       {h.before} → {h.after} candidates
-                    </small>
+                    </small>}
                   </p>
                 </li>
               ))}
@@ -359,22 +423,29 @@ function Evidence({
   observation: r,
   decision: d,
   dispatch,
+  live,
+  checksId,
 }: {
   observation: DemoState["observations"][number];
   decision: DemoState["decisions"][number];
-  dispatch: (a: Action) => void;
+  dispatch: (a: Action) => void | Promise<void>;
+  live?: LiveControls;
+  checksId?: string;
 }) {
   const [assumptions, setAssumptions] = useState(false),
-    [comparable, setComparable] = useState(false);
+    [comparable, setComparable] = useState(false), [reason, setReason] = useState("");
+  const unknown = unknownContext(r.citizen_context?.assumptions);
+  const needsReason = r.value === "absent" && unknown.length > 0;
   const change = (state: typeof d.state) =>
-    dispatch({
+    void Promise.resolve(dispatch({
       type: "review",
       id: r.id,
       state,
       assumptions,
       comparable,
+      reason: state === "approved" ? reason.trim() : "",
       at: now(),
-    });
+    })).catch(() => undefined);
   return (
     <article
       className="evidence"
@@ -389,9 +460,13 @@ function Evidence({
       </div>
       <p className="evidence-provenance">
         {r.title}
-        <span>Demo reviewer / simulated observation</span>
+        <span>{live ? "Citizen observation" : "Simulated citizen observation"}</span>
       </p>
-      <div className="review-checks">
+      {r.citizen_context?.source==="ai_draft" && <span className="ai-badge">AI draft</span>}
+      {r.notes && <p className="observation-notes">{r.notes}</p>}
+      {r.observed_at && <p className="evidence-provenance">Observed <time dateTime={r.observed_at}>{new Date(r.observed_at).toLocaleString("en-GB")}</time></p>}
+      <div className="review-checks" id={checksId}>
+        <details className="evidence-assumptions"><summary>Read approval assumptions</summary><p>One persistent source, normal downstream flow, and comparable observations. An absence can eliminate reaches only if the signal persists and could be detected.</p></details>
         <label>
           <input
             type="checkbox"
@@ -411,25 +486,32 @@ function Evidence({
           </label>
         )}
       </div>
+      <div className="approval-row">
+      {r.value === "absent" && <section className="approval-context" aria-label="Citizen context answers">
+        <h3>Citizen context</h3>
+        <dl>{Object.entries(contextLabels).map(([key,label]) => <div key={key} className={unknown.includes(key as keyof typeof contextLabels)?"context-unknown":""}><dt>{label}</dt><dd>{contextText(r.citizen_context?.assumptions[key as keyof typeof contextLabels])}</dd></div>)}</dl>
+        {needsReason && <label className="approval-reason">Reason for approving with unknown answers<textarea minLength={10} maxLength={500} value={reason} onChange={e=>setReason(e.target.value)} aria-describedby={`reason-help-${r.id}`}/><small id={`reason-help-${r.id}`}>At least 10 characters. This reason is saved in the review event.</small></label>}
+      </section>}
       <div className="review-actions">
         <button
           onClick={() => change("approved")}
           disabled={
-            !assumptions ||
-            (r.value === "absent" && !comparable) ||
+            live?.pending || !assumptions ||
+            (r.value === "absent" && !comparable) || (needsReason && reason.trim().length < 10) ||
             r.value === "cannot_tell"
           }
         >
           Approve
         </button>
-        <button onClick={() => change("rejected")}>Reject</button>
-        <button onClick={() => change("uncertain")}>Mark uncertain</button>
+        <button disabled={live?.pending} onClick={() => change("rejected")}>Reject</button>
+        <button disabled={live?.pending} onClick={() => change("uncertain")}>Mark uncertain</button>
         <button
           onClick={() => change("unreviewed")}
-          disabled={d.state === "unreviewed"}
+          disabled={live?.pending || d.state === "unreviewed"}
         >
           Withdraw
         </button>
+      </div>
       </div>
     </article>
   );
@@ -440,16 +522,23 @@ function SitePanel({
   state,
   dispatch,
   onClose,
+  live,
 }: {
   code: string;
   data: Network;
   state: DemoState;
-  dispatch: (a: Action) => void;
+  dispatch: (a: Action) => void | Promise<void>;
+  live?: LiveControls;
   onClose: () => void;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const [value, setValue] = useState<Value>("present");
   const [added, setAdded] = useState(false);
+  const [draftText,setDraftText]=useState("");
+  const [draftNote,setDraftNote]=useState("");
+  const [drafting,setDrafting]=useState(false);
+  const [submissionId,setSubmissionId]=useState<string | undefined>();
+  const [observedAt,setObservedAt]=useState<string | undefined>();
   useEffect(() => {
     heading.current?.focus();
   }, []);
@@ -477,14 +566,19 @@ function SitePanel({
         unreviewed.
       </small>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          dispatch({ type: "add", site: code, value, at: now() });
-          setAdded(true);
+          setAdded(false);
+          const id=submissionId ?? crypto.randomUUID(), at=observedAt ?? now();
+          setSubmissionId(id);setObservedAt(at);
+          try {
+            await dispatch({ type: "add", site: code, value, at, ...(live ? {id,notes:draftText} : {}) });
+            setAdded(true);setSubmissionId(undefined);setObservedAt(undefined);
+          } catch { /* The parent presents the server error. Keep the id for retry. */ }
         }}
       >
         <fieldset>
-          <legend>Add a simulated observation</legend>
+          <legend>{live ? "Submit an observation" : "Add a simulated observation"}</legend>
           {(["present", "absent", "cannot_tell"] as Value[]).map((v) => (
             <label key={v}>
               <input
@@ -493,14 +587,28 @@ function SitePanel({
                 checked={value === v}
                 onChange={() => {
                   setValue(v);
-                  setAdded(false);
+                  setAdded(false);setSubmissionId(undefined);setObservedAt(undefined);
                 }}
               />
               {valueText(v)}
             </label>
           ))}
         </fieldset>
-        <button type="submit">Add observation</button>
+        {live && <>
+          <label className="draft-label">Observation notes
+            <textarea maxLength={500} value={draftText} onChange={e=>{setDraftText(e.target.value);setSubmissionId(undefined);setObservedAt(undefined);}} />
+          </label>
+          <button type="button" disabled={live.pending || drafting || !draftText.trim()} onClick={async()=>{
+            setDrafting(true);setDraftNote("");
+            try {const draft=await live.onDraft(draftText);
+              if(draft){setValue(draft.value);setSubmissionId(undefined);setObservedAt(undefined);setDraftNote("AI draft loaded. Check the value before submitting your observation.");}
+              else setDraftNote("Draft unavailable. Select the observation value yourself.");
+            } finally {setDrafting(false);}
+          }}>Suggest a draft</button>
+          {draftNote && <p role="status">{draftNote}</p>}
+          <p className="evidence-provenance">Submitting confirms your observation. It remains pending until a reviewer approves it.</p>
+        </>}
+        <button type="submit" disabled={live?.pending || drafting}>{live ? "Submit observation" : "Add observation"}</button>
         {added && <span role="status">Added for review.</span>}
       </form>
     </section>

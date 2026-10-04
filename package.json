@@ -17,9 +17,11 @@
     "migrate": "node --experimental-strip-types scripts/migrate.ts",
     "seed:reviewers": "node --experimental-strip-types scripts/seed-reviewers.ts",
     "seed:demo": "node --experimental-strip-types scripts/seed-demo.ts",
+    "setup:citizen": "node --experimental-strip-types scripts/setup-citizen-cases.ts",
     "test:api": "node --experimental-strip-types --test api/tests/*.test.ts",
     "check:runtime": "node --experimental-strip-types scripts/check-runtime.ts",
-    "check:repository": "node --experimental-strip-types scripts/check-repository.ts"
+    "check:repository": "node --experimental-strip-types scripts/check-repository.ts",
+    "eval:ai": "node --experimental-strip-types scripts/eval-ai.ts"
   },
   "devDependencies": {
     "@testing-library/dom": "10.4.1",

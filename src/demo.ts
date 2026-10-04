@@ -1,4 +1,5 @@
 import cachedNetwork from "../data/coimbra.network.json" with { type: "json" };
+import { unknownContext } from "../shared/observations.ts";
 import {
   fromDatabase,
   type StoredObservation,
@@ -12,9 +13,12 @@ import {
 } from "../engine/index.ts";
 export type Network = typeof cachedNetwork;
 export const network: Network = cachedNetwork;
-export const demoCase = { id: "coimbra-foam-demo", signal: "foam" };
+export const demoCase = { id: "coimbra-foam-demo", title: "Foam investigation", signal: "foam" };
 export interface Observation extends StoredObservation {
   title: string;
+  notes?: string;
+  observed_at?: string;
+  citizen_context?: import("./citizen/model.ts").CitizenContext;
 }
 export interface HistoryEvent {
   id: number;
@@ -32,13 +36,14 @@ export interface DemoState {
   sequence: number;
 }
 export type Action =
-  | { type: "add"; site: string; value: Value; at: string }
+  | { type: "add"; site: string; value: Value; at: string; id?: string; notes?: string }
   | {
       type: "review";
       id: string;
       state: StoredDecision["state"];
       assumptions: boolean;
       comparable: boolean;
+      reason?: string;
       at: string;
     }
   | { type: "conflict"; at: string }
@@ -75,6 +80,7 @@ function observation(
     value,
     confirmed: true,
     title,
+    citizen_context: { source: "manual", assumptions: { persistence: true, detectability: true, flow: true, recent_rain: "no" } },
   };
 }
 export function seed(data: Network, at: string): DemoState {
@@ -157,7 +163,7 @@ export function seed(data: Network, at: string): DemoState {
       "seed-3",
       pending.code,
       "absent",
-      "Pending simulated observation",
+      "Pending citizen demo report",
     ),
   );
   decisions.push({
@@ -177,21 +183,21 @@ export function seed(data: Network, at: string): DemoState {
       {
         id: 0,
         at,
-        text: `Demo reviewer approved simulated absence at site ${first.code}.`,
+        text: `Demo approved simulated absence at site ${first.code}.`,
         before: data.reaches.length,
         after: firstResult.candidates.length,
       },
       {
         id: 1,
         at,
-        text: `Demo reviewer approved simulated presence at site ${second.code}.`,
+        text: `Demo approved simulated presence at site ${second.code}.`,
         before: firstResult.candidates.length,
         after: secondResult.candidates.length,
       },
       {
         id: 2,
         at,
-        text: `Demo reviewer loaded pending simulated absence at site ${pending.code}; live approval required.`,
+        text: `Demo loaded pending simulated absence at site ${pending.code}; awaiting approval.`,
         before: secondResult.candidates.length,
         after: secondResult.candidates.length,
       },
@@ -248,8 +254,8 @@ export function transition(
     });
     text =
       action.type === "conflict"
-        ? `Demo reviewer loaded contradictory approved evidence at site ${site}.`
-        : `Demo reviewer added ${valueText(value).toLowerCase()} at site ${site}; awaiting review.`;
+        ? `Demo loaded contradictory approved evidence at site ${site}.`
+        : `Demo added ${valueText(value).toLowerCase()} at site ${site}; awaiting review.`;
   } else {
     const r = observations.find((r) => r.id === action.id),
       d = decisions.find((d) => d.report_id === action.id);
@@ -257,7 +263,7 @@ export function transition(
     if (
       action.state === "approved" &&
       (!action.assumptions ||
-        (r.value === "absent" && !action.comparable) ||
+        (r.value === "absent" && (!action.comparable || (unknownContext(r.citizen_context?.assumptions).length > 0 && (action.reason?.trim().length ?? 0) < 10))) ||
         r.value === "cannot_tell")
     )
       return state;
@@ -280,7 +286,8 @@ export function transition(
           }
         : x,
     );
-    text = `Demo reviewer ${action.state === "unreviewed" ? "withdrew approval for" : action.state === "uncertain" ? "marked uncertain" : action.state} ${valueText(r.value).toLowerCase()} at site ${r.site_code}.`;
+    text = `Demo ${action.state === "unreviewed" ? "withdrew approval for" : action.state === "uncertain" ? "marked uncertain" : action.state} ${valueText(r.value).toLowerCase()} at site ${r.site_code}.`;
+    if (action.state === "approved" && action.reason?.trim()) text += ` Reason: ${action.reason.trim()}`;
   }
   const after = evaluate({ observations, decisions }, data).candidates.length;
   return {
