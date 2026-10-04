@@ -81,6 +81,7 @@ export function Landing() {
         <div className="landing-actions">
           <Link className="primary-action" href="/demo">Open the interactive demo <span aria-hidden="true">↗</span></Link>
           <Link className="secondary-action" href="/report" onClick={() => setDemoMode(false)}>Report what you see</Link>
+          <Link className="tertiary-action" href="/play">Follow the foam: a four-minute mission</Link>
           <Link className="tertiary-action" href="/login">Reviewer sign in</Link>
         </div>
         <div className="hero-field-note"><span className="eyebrow">Pilot field atlas</span><strong>Coimbra, Portugal</strong><p>Follow a visible signal upstream. Use the evidence to plan the next check.</p></div>

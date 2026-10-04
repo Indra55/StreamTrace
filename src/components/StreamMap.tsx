@@ -7,6 +7,7 @@ import type { InvestigationResult } from "../../engine/index.ts";
 import { siteSummary, type DemoState, type Network } from "../demo.ts";
 interface Props {
   offline?: boolean;
+  missionPresentation?: boolean;
   data: Network;
   result: InvestigationResult;
   state: DemoState;
@@ -17,6 +18,7 @@ interface Props {
 export function StreamMap({
   data,
   offline=false,
+  missionPresentation=false,
   result,
   state,
   reducedMotion,
@@ -114,7 +116,7 @@ export function StreamMap({
           color: single ? "#a34924" : candidate ? "#245b83" : "#bac3c5",
           weight: single ? 7 : candidate ? 4 : 2,
           opacity: candidate ? 1 : 0.7,
-          className: candidate && !reducedMotion ? "reach-flow" : "",
+          className: `${candidate && !reducedMotion ? "reach-flow" : ""}${missionPresentation ? " mission-reach" : ""}`,
           interactive: false,
         },
       ).addTo(layer);
@@ -168,7 +170,7 @@ export function StreamMap({
           offset: [0, -18],
         });
     }
-  }, [data, result, state, reducedMotion]);
+  }, [data, result, state, reducedMotion, missionPresentation]);
   return (
     <div className="map-wrap">
       <div className="leaflet-host" ref={host} />

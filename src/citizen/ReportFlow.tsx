@@ -1,3 +1,4 @@
+import { ObservationText, ObservationChoice } from "../components/ReportPanels.tsx";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ApiError, request, casesSchema, networkSchema, type LiveCase } from "../api.ts";
@@ -132,8 +133,8 @@ export default function ReportFlow({ simulatedOnly = false }: { simulatedOnly?: 
         {draft.site && <p>Selected site: <strong>{draft.site}</strong>{draft.distance === undefined ? "" : `, about ${draft.distance} m away`}</p>}
         <button disabled={loading || unavailable || (!draft.general && !draft.site)} onClick={() => setStep(draft.general ? "description" : "value")}>Continue</button>
       </>}
-      {step === "value" && <><h1>Did you see {signalLabels[draft.signal].toLowerCase()}?</h1><p>Site {draft.site}</p><div className="citizen-options">{Object.entries(valueLabels).map(([value, label]) => <button key={value} aria-pressed={draft.value === value} onClick={() => update({ value: value as CitizenDraft["value"], assumptions: { ...emptyAssumptions } })}>{label}</button>)}</div><button onClick={() => setStep("description")}>Continue</button></>}
-      {step === "description" && <><h1>{draft.general ? "What did you notice?" : "Anything you want to add?"}</h1><label>Describe it in your own words <span>{draft.general ? "" : "(optional)"}</span><textarea maxLength={500} disabled={voiceBusy} value={draft.text} onChange={e => update({ text: e.target.value })}/></label><small>{draft.text.length} / 500 characters</small>
+      {step === "value" && <><h1>Did you see {signalLabels[draft.signal].toLowerCase()}?</h1><p>Site {draft.site}</p><ObservationChoice value={draft.value} onChange={value => update({ value, assumptions: { ...emptyAssumptions } })}/><button onClick={() => setStep("description")}>Continue</button></>}
+      {step === "description" && <><h1>{draft.general ? "What did you notice?" : "Anything you want to add?"}</h1><ObservationText text={draft.text} onChange={text => update({ text })} disabled={voiceBusy} optional={!draft.general}/>
         <VoiceInput simulated={simulated} cannedTranscript={draft.general ? "I noticed something unusual near the water." : draft.value === "absent" ? "I did not see any foam at this site." : "I can see foam floating on the water at this site."} onBusyChange={setVoiceBusy} onTranscript={text => { update({ text }); setTranscriptionLabel(simulated ? "Simulated transcription, please check" : "AI transcription, please check"); }}/>
         {transcriptionLabel && <p className="ai-badge">{transcriptionLabel}</p>}
         <button disabled={voiceBusy || draft.general && !draft.text.trim()} onClick={() => void guide()}>Check my report</button></>}
