@@ -8,6 +8,7 @@ import { CitizenFrame, Link, useRoute, setDemoMode } from "./citizen/navigation.
 import { Header } from "./components/Header.tsx";
 import { Landing } from "./components/Landing.tsx";
 import { Workflow } from "./components/Workflow.tsx";
+import { Documentation } from "./components/Documentation.tsx";
 
 const Mission = lazy(() => import("./play/Mission.tsx"));
 
@@ -31,6 +32,7 @@ export default function Routes() {
   else if (path === "/task") page = <TaskPage key={route}/>;
   else if (path === "/review" || path === "/login") page = <LiveApp loginOnly={path === "/login"}/>;
   else if (path === "/workflow") page = <Workflow/>;
+  else if (path === "/docs") page = <Documentation/>;
   else page = <CitizenFrame simulated={false}><h1>Page not found</h1><Link href="/">Return home</Link></CitizenFrame>;
   return <div className="route-root">{path !== "/play" && <Header path={path} route={route}/>}{page}</div>;
 }

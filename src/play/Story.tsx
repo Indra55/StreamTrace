@@ -1,107 +1,50 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { River } from "./effects.tsx";
+import { OPENING_DURATION, openingBubbles, River } from "./effects.tsx";
 
-/** Word-by-word reveal with blur-to-sharp entrance. */
-function WordReveal({ words, startDelay = 0, reduced }: {
-  words: string[]; startDelay?: number; reduced: boolean;
-}) {
-  return <>{words.map((word, i) =>
-    <motion.span
-      key={i}
-      style={{ display: "inline-block", marginRight: "0.28em" }}
-      initial={reduced ? false : { opacity: 0, y: 26, filter: "blur(6px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{
-        duration: 0.75,
-        delay: startDelay + i * 0.1,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-    >
-      {word}
-    </motion.span>,
-  )}</>;
-}
-
-export function Opening({ reduced }: { reduced: boolean }) {
+export function Opening({ reduced, sound }: { reduced: boolean; sound?: { enabled: boolean; toggle: () => void; water?: () => (() => void) | undefined } }) {
   const [arrived, setArrived] = useState(reduced);
+  const [flowing, setFlowing] = useState(false);
   useEffect(() => {
-    if (reduced) { setArrived(true); return; }
-    const timer = setTimeout(() => setArrived(true), 2600);
-    return () => clearTimeout(timer);
+    if (reduced) { setArrived(true); setFlowing(false); return; }
+    let cancelled = false;
+    let revealTimer: ReturnType<typeof setTimeout>;
+    setArrived(false);
+    const images = openingBubbles.map(src => new Promise<void>(resolve => {
+      const image = new Image();
+      image.onload = image.onerror = () => resolve();
+      image.src = src;
+    }));
+    // Wait for local assets, but never leave the page blurred if loading stalls.
+    const fallback = setTimeout(() => { if (!cancelled) setArrived(true); }, OPENING_DURATION);
+    void Promise.all(images).then(() => {
+      if (cancelled) return;
+      clearTimeout(fallback);
+      setFlowing(true);
+      revealTimer = setTimeout(() => { setArrived(true); setFlowing(false); }, OPENING_DURATION);
+    });
+    return () => { cancelled = true; clearTimeout(fallback); clearTimeout(revealTimer); };
   }, [reduced]);
 
-  return (
-    <section id="opening" className="opening-scene">
-      <River reduced={reduced} />
-      <AnimatePresence mode="wait">
-        {!arrived ? (
-          <motion.div
-            key="signal"
-            className="opening-whisper"
-            initial={{ opacity: 0, filter: "blur(14px)", scale: 0.95 }}
-            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-            exit={{ opacity: 0, filter: "blur(10px)", scale: 1.03 }}
-            transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            Something is changing.
-          </motion.div>
-        ) : (
-          <motion.div
-            key="story"
-            className="opening-copy"
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.span
-              className="story-kicker"
-              initial={reduced ? false : { opacity: 0, y: 12, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.9, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-            >
-              A small observation. A bigger picture.
-            </motion.span>
-
-            <h1>
-              {reduced ? (
-                <>Our waters are changing.<br /><em>Look a little closer.</em></>
-              ) : (
-                <>
-                  <span className="h1-line">
-                    <WordReveal words={["Our", "waters", "are", "changing."]} startDelay={0.15} reduced={reduced} />
-                  </span>
-                  <em>
-                    <WordReveal words={["Look", "a", "little", "closer."]} startDelay={0.6} reduced={reduced} />
-                  </em>
-                </>
-              )}
-            </h1>
-
-            <motion.p
-              initial={reduced ? false : { opacity: 0, y: 16, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 1.1, delay: 1.3, ease: [0.22, 1, 0.36, 1] }}
-            >
-              In a changing climate, healthy waters mean healthy ecosystems and
-              healthy communities. A patch of foam. A change in colour. Dead fish
-              that weren't there before. These signals connect water quality to
-              the well-being of every living thing downstream.
-            </motion.p>
-
-            <motion.p
-              className="opening-invitation"
-              initial={reduced ? false : { opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
-            >
-              You notice it. Together, we can follow it - a <strong>One Health</strong> approach to protecting our waterways.
-            </motion.p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </section>
-  );
+  return <section id="opening" className="opening-scene" data-revealed={arrived}>
+    <River reduced={reduced} active={flowing} water={sound?.water} />
+    <motion.div className="opening-copy"
+      initial={reduced ? false : { filter: "blur(16px)", opacity: .45, y: 8 }}
+      animate={{ filter: arrived ? "blur(0px)" : "blur(16px)", opacity: arrived ? 1 : .45, y: arrived ? 0 : 8 }}
+      transition={{ duration: .25, ease: [0.22, 1, 0.36, 1] }}>
+      <span className="story-kicker">A small observation. A bigger picture.</span>
+      <h1>our waters are <span className="highlight-scribble">CHANGING.
+        <svg className="scribble-svg" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true" style={{overflow: 'visible'}}>
+          <path d="M0 3 Q25 0 50 3 T100 2 L100 28 Q75 30 50 27 T0 29 Z" fill="currentColor" />
+        </svg>
+      </span><br /><em>look a little closer.</em></h1>
+      <p>In a changing climate, healthy waters mean healthy ecosystems and
+        healthy communities. A patch of foam. A change in colour. Dead fish
+        that weren't there before. These signals connect water quality to
+        the well-being of every living thing downstream.</p>
+      <p className="opening-invitation">You notice it. Together, we can follow it - a <strong>One Health</strong> approach to protecting our waterways.</p>
+    </motion.div>
+  </section>;
 }
 
 const steps = [
@@ -123,7 +66,7 @@ export function Process({ reduced }: { reduced: boolean }) {
     <section id="process" className="process-scene">
       <span className="story-kicker">What we do</span>
       <h1>
-        Turn a moment of noticing<br />
+        TURN a moment of NOTICING<br />
         into a place to <em>start looking.</em>
       </h1>
       <div className="process-line" aria-label="Report, review, narrow, check next">

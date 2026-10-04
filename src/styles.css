@@ -288,6 +288,11 @@ small {
   font-weight: 700;
   box-shadow: 0 1px 4px #24343b2a;
 }
+.site-pin-selected {
+  background: #245b83;
+  color: #fff;
+  transform: scale(1.1);
+}
 .site-pin small {
   position: absolute;
   top: 39px;

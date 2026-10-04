@@ -10,9 +10,10 @@ export function MissionReport({form,data,onChange,onExample,onAssistant,onAnswer
     <p className="eyebrow">Foam observation / simulated</p>
     <details><summary>Observation site: {form.site} (change)</summary><SitePicker data={{...data,sites:data.sites.filter(s=>s.accessible)}} value={form.site} onChange={site=>onChange({site})} allowLocation={false}/></details>
     <ObservationChoice value={form.value} onChange={value=>onChange({value})}/>
+    {form.value==="cannot_tell"&&<p className="mission-uncertain-note" role="status">{draft?.value==="cannot_tell" ? "The assistant could not identify a clear Seen or Not seen observation. Check the text and selection before submitting." : "Cannot tell reports are kept as uncertain and do not narrow the search."}</p>}
     <p className="mission-privacy">AI privacy: report text and context answers may be sent to the AI service for drafting. Do not include names, phone numbers or personal details. Coordinates are never sent.</p>
     <ObservationText text={form.text} onChange={text=>onChange({text})} disabled={form.busy}/>
-    <div className="mission-actions"><button data-action="example" onClick={onExample} disabled={form.busy}>Use example observation</button><VoiceInput onBusyChange={busy=>onChange({busy})} simulated cannedTranscript={form.value==="absent"?"I did not see any foam at this site.":"I can see foam floating on the water at this site."} onTranscript={text=>onChange({text})}/></div>
+    <div className="mission-actions"><button data-action="example" onClick={onExample} disabled={form.busy}>Use example observation</button><VoiceInput onBusyChange={busy=>onChange({busy})} onTranscript={text=>onChange({text})}/></div>
     <button data-action="assistant" disabled={form.busy||!form.text.trim()} onClick={()=>onAssistant()}>Ask the assistant</button>
     {form.busy&&<p role="status">Drafting your observation…</p>}
     {draft&&<><p className="ai-badge">{draft.source==="ai"?"Live AI draft":fallbackLabel}</p><p>{draft.rationale_en}</p><p>Draft is editable above. Your confirmation does not approve evidence.</p><ContextSummary answers={form.assumptions}/>

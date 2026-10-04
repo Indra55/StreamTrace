@@ -1,0 +1,23 @@
+Use case: ui-mockup.
+Asset type: a high-resolution website illustration for the StreamTrace volunteer outreach chapter in a hackathon demonstration. Generate a finished bitmap asset, landscape 3:2 composition, about 1536 by 1024 pixels.
+Primary request: two beautifully legible smartphone messaging screens side by side, illustrating a StreamTrace researcher asking fictional volunteers to check for foam in a stream, with a clickable-looking field-task link and natural volunteer replies. Left phone is WhatsApp, right phone is an SMS / Messages app. This is explicitly a simulated example, not a screenshot of actual delivered messages.
+Scene/backdrop: flat warm ivory #f6f4ed, generous but modest margins, faint grounding shadows. Two upright, front-facing dark charcoal rounded smartphone frames; equal size; no perspective distortion; screens occupy most of each phone. Restrained editorial product mockup, clean crisp typography, no photography, no hands, no extra objects.
+Left WhatsApp phone: familiar green WhatsApp header, white and pale green chat bubbles, very subtle warm chat wallpaper. Chat title "Ana R." and subtitle "Volunteer". All seen from the researcher's side: researcher's sent request is on the right in pale green; volunteer replies on left in white. Status bar 09:41. A small Today separator.
+Message content, render verbatim with large readable sans-serif text:
+Sent bubble: "Hi Ana! Could you check site 006 for foam from the public path?"
+Sent bubble: "Stay out of the water. Reply Seen, Not seen or Cannot tell."
+Sent bubble with a beautiful compact link preview card: "StreamTrace" / "Site 006 • Foam check" / underlined blue-green "Open field task ↗". Include small link icon, not a giant image.
+Received bubble: "Sure, I can stop by on my walk."
+Received bubble: "Not seen. I checked from the path."
+Sent bubble: "Thanks! Please confirm it in the form so a researcher can review it."
+Add subtle timestamps 09:41, 09:43 and 09:48, and blue double check marks beside sent messages. Bottom message composer with paperclip / camera / microphone controls and text "Message".
+Right SMS phone: recognizable iOS-style Messages app UI, light gray header, circular avatar with initials BT, contact "Bruno T.", small subtitle "SMS". Researcher's outgoing bubbles green on right; incoming light gray on left. Status bar 09:41.
+Message content, render verbatim with large readable sans-serif text:
+Sent bubble: "StreamTrace field check: can you look for foam at site 006?"
+Sent bubble: "Use the public path. Do not enter the water."
+Sent link bubble with preview: "Open field task ↗" / smaller "Site 006 • Foam check".
+Received bubble: "The water is moving too fast. Cannot tell."
+Sent bubble: "That's useful too. Please record Cannot tell in the form."
+Add subtle timestamps and SMS composer labeled "Text Message".
+Below phones on background, one understated centered small caption verbatim: "Simulated outreach • Fictional volunteers".
+Constraints: exceptionally crisp, readable and correctly spelled English text. No water-safety diagnosis, no pollution certainty, no invented environmental measurements, no real phone numbers, no unverified domain names, no claims of actual messaging integration. No em dashes. Fit both phones fully, don't crop phone tops or bottoms. No large marketing title. Focus on the conversations.

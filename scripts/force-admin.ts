@@ -2,7 +2,7 @@ import { hash } from "argon2";
 import { adminTransaction } from "./migrate.ts";
 
 async function run() {
-  const email = "admine@email.com";
+  const email = "admin@email.com";
   const password = "pass123";
   const passwordHash = await hash(password);
   

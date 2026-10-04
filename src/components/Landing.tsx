@@ -64,7 +64,7 @@ const features = [
   { title: "Guided citizen reports", text: "Record foam, colour, litter, dead fish, or discharge at an observation site. Each report contributes to a growing picture of stream health, empowering communities to become environmental stewards.", icon: <><path d="M7 3h10v18H7zM10 7h4M10 11h4M10 15h2"/><path d="M4 6h3M17 6h3"/></> },
   { title: "Researcher review", text: "A pending queue keeps new reports separate from approved evidence. Researchers validate observations before they can influence the investigation, ensuring data quality for reliable ecosystem insights.", icon: <><path d="M5 3h14v18H5zM8 8l2 2 5-5M8 14h8M8 17h5"/></> },
   { title: "Three ways to read the network", text: "Use the geographic map, a stream connection diagram, or a text list. Each shows the same candidate source stretches, making environmental data accessible to researchers, policymakers, and communities.", icon: <><path d="M3 5l6-2 6 2 6-2v16l-6 2-6-2-6 2zM9 3v16M15 5v16"/></> },
-  { title: "Useful next-site suggestions", text: "The engine selects the most informative next observation site using bisection, reducing the search area faster to minimise the duration of potential environmental and human health exposure.", icon: <><circle cx="12" cy="10" r="6"/><circle cx="12" cy="10" r="2"/><path d="M8 15l4 7 4-7M12 1v3M3 10h3M18 10h3"/></> },
+  { title: "Useful next-site suggestions", text: "The engine compares how much each possible answer could narrow the candidates. It chooses a useful split to help teams make limited field time count.", icon: <><circle cx="12" cy="10" r="6"/><circle cx="12" cy="10" r="2"/><path d="M8 15l4 7 4-7M12 1v3M3 10h3M18 10h3"/></> },
   { title: "AI help, with a human check", text: "AI assists with observation drafting and context questions. The citizen confirms, and a researcher decides, keeping humans in the loop for responsible, transparent environmental assessment.", icon: <><path d="M4 5h16v12H9l-5 4zM8 9h8M8 13h5"/></> },
   { title: "Traceable, reversible decisions", text: "Evidence history records every review change. Withdrawing an approval recalculates the search, supporting the scientific rigour needed for evidence-based environmental decision-making.", icon: <><path d="M3 11a9 9 0 1 1 3 8M3 4v7h7M12 7v5l3 2"/></> },
 ];
@@ -74,11 +74,11 @@ export function Landing() {
     <section className="landing-hero" aria-labelledby="landing-title">
       <div className="hero-content">
         <div className="hero-heading">
-          <p className="eyebrow">StreamTrace / One Health · Citizen Science · Climate-Resilient Monitoring</p>
+          <p className="eyebrow">StreamTrace / One Health · Citizen Science</p>
           <h1 id="landing-title">Healthy waters.<br/>Healthy ecosystems.<br/>Healthy communities.</h1>
         </div>
         <div className="hero-copy">
-          <p className="landing-intro">Citizens report what they see in a stream. Researchers review it, and StreamTrace shows which stretches could be the source and where to look next, narrowing a pollution source faster to reduce human exposure risk and protect aquatic biodiversity.</p>
+          <p className="landing-intro">Citizens report what they see in a stream. Researchers review it, and StreamTrace shows which stretches could be the source and where to look next. Turn local observations into a focused search, and make limited field time count.</p>
           <p className="one-health-tagline">A <strong>One Health</strong> approach: connecting water quality, ecosystem health, and community well-being through citizen-powered environmental monitoring.</p>
           <div className="landing-actions">
             <div className="main-actions">
@@ -87,6 +87,7 @@ export function Landing() {
             </div>
             <div className="secondary-links">
               <Link className="tertiary-action" href="/workflow" onClick={() => setDemoMode(false)}>Access Live Portal <span aria-hidden="true">→</span></Link>
+              <Link className="tertiary-action" href="/docs">Read the project guide <span aria-hidden="true">→</span></Link>
             </div>
           </div>
         </div>
@@ -94,7 +95,7 @@ export function Landing() {
       <div className="hero-visual">
         <MapPreview/>
         <div className="hero-field-note">
-          <span className="eyebrow">Pilot field atlas · OneAquaHealth</span>
+          <span className="eyebrow">Prototype field atlas · OneAquaHealth</span>
           <strong>Coimbra, Portugal</strong>
           <p>Follow a visible signal upstream. Use the evidence to plan the next check.</p>
         </div>
@@ -103,7 +104,7 @@ export function Landing() {
 
     <section className="project-intro landing-section" aria-labelledby="project-title">
       <p className="section-index">01 / The project</p>
-      <div><h2 id="project-title">From a local observation<br/>to a focused investigation.</h2><p>Urban freshwater ecosystems face growing pressure from climate change, pollution, and urbanisation. When an anomaly appears in a stream - foam, discolouration, dead fish - every hour of delay increases the risk to downstream communities, aquatic biodiversity, and the broader ecosystem. StreamTrace helps narrow the search faster.</p><p>It is a shared field guide built on the <strong>One Health</strong> principle: citizens collect observations, researchers check the evidence, and the engine helps choose where to look next, connecting environmental monitoring to human and ecosystem well-being.</p></div>
+      <div><h2 id="project-title">From a local observation<br/>to a focused investigation.</h2><p>When foam, discolouration or dead fish appear in a stream, a sighting tells us where a concern was noticed. Its source could be farther upstream. Researchers need a way to check those observations and choose a useful next site without visiting every stretch in order.</p><p>It is a shared field guide built on the <strong>One Health</strong> principle: citizens collect observations, researchers check the evidence, and the engine helps choose where to look next, connecting environmental monitoring to human and ecosystem well-being.</p></div>
     </section>
 
     <section id="how-it-works" tabIndex={-1} className="how-it-works landing-section" aria-labelledby="how-title">
@@ -126,7 +127,7 @@ export function Landing() {
     </section>
 
     <section className="feature-section landing-section" aria-labelledby="features-title">
-      <div className="section-heading"><p className="section-index">04 / The tools</p><h2 id="features-title">Built to follow the evidence.</h2><p>From the first field report to the next observation, with a human decision at each important step. Every tool supports the One Health mission: faster detection, better evidence, healthier ecosystems.</p></div>
+      <div className="section-heading"><p className="section-index">04 / The tools</p><h2 id="features-title">Built to follow the evidence.</h2><p>From the first field report to the next observation, with a human decision at each important step. Clear reports, reviewed evidence and a reason for the next check.</p></div>
       <div className="feature-list">{features.map(feature => <article className="feature-item" key={feature.title}><FieldIcon>{feature.icon}</FieldIcon><div><h3>{feature.title}</h3><p>{feature.text}</p></div></article>)}</div>
     </section>
 
@@ -136,21 +137,22 @@ export function Landing() {
     </section>
 
     <section className="one-health-section landing-section" aria-labelledby="one-health-title" style={{ background: "linear-gradient(135deg, rgba(36, 91, 131, 0.06), rgba(36, 52, 59, 0.03))", padding: "60px 40px", borderRadius: "20px", marginTop: "40px" }}>
-      <div className="section-heading"><p className="section-index">06 / One Health vision</p><h2 id="one-health-title">Water connects everything.</h2><p>The <strong>One Health</strong> approach recognises that the health of people, animals, and ecosystems are deeply interconnected. A contaminated stream doesn't just harm aquatic life, it threatens the drinking water, recreational safety, and livelihoods of downstream communities.</p></div>
+      <div className="section-heading"><p className="section-index">06 / One Health impact</p><h2 id="one-health-title">Water connects everything.</h2><p>Freshwater concerns matter to people, aquatic life and the surrounding environment. StreamTrace contributes a practical step: help communities share observations and help researchers decide where to follow up.</p></div>
       <div className="one-health-pillars">
-        <article><strong>🌊 Ecosystem health</strong><p>Faster source identification reduces the duration and spread of contamination events, protecting aquatic biodiversity and riparian habitats under growing climate stress.</p></article>
-        <article><strong>🏥 Human well-being</strong><p>Narrowing a pollution source sooner means earlier warnings for communities, reducing exposure to waterborne hazards, supporting public health, and informing local decision-makers.</p></article>
-        <article><strong>🌿 Climate resilience</strong><p>As climate change intensifies extreme weather and alters water flow, community-driven monitoring provides the real-time data needed for adaptive environmental management.</p></article>
+        <article><strong>🌊 Useful field effort</strong><p>In the clean synthetic 30-reach benchmark, bisection averages 5.07 checks to a single candidate, compared with 19.10 for random checks. This measures a simulation, not field response time.</p></article>
+        <article><strong>🏥 Community participation</strong><p>Citizens can report without an account and check review status. Researchers decide which observations can guide the investigation, giving local noticing a clear path to follow-up.</p></article>
+        <article><strong>🌿 An impact to validate</strong><p>Earlier investigation could support protection of people and ecosystems. Exposure reduction, biodiversity recovery and real-world time savings still need a field pilot and independent evidence.</p></article>
       </div>
+      <p style={{ marginTop: "24px" }}><Link className="tertiary-action" href="/docs#evidence">See the evidence, method and limits <span aria-hidden="true">→</span></Link></p>
     </section>
 
     <section className="mission-section landing-section" aria-labelledby="mission-section-title" style={{ background: "rgba(36, 52, 59, 0.03)", padding: "60px 40px", borderRadius: "20px", marginTop: "40px" }}>
-      <div className="section-heading"><p className="section-index">07 / Experience</p><h2 id="mission-section-title">Interactive Case Study</h2><p>Experience the complete investigation workflow in a guided, four-minute simulation. You will step into the roles of both a citizen reporting an anomaly and a researcher verifying evidence to narrow the search radius.</p></div>
+      <div className="section-heading"><p className="section-index">07 / Experience</p><h2 id="mission-section-title">Interactive Case Study</h2><p>Experience the investigation workflow in a guided simulation. Step into the roles of a citizen reporting an observation and a researcher reviewing evidence to narrow the possible source stretches.</p></div>
       <div style={{ marginTop: "30px" }}>
         <Link className="primary-action" href="/play">Launch the scenario <span aria-hidden="true">↗</span></Link>
       </div>
     </section>
 
-    <footer className="landing-footer"><span className="footer-mark">StreamTrace<span>One Health · Coimbra field atlas</span></span><p className="landing-trust">Built for the <strong>OneAquaHealth IEEE Global Hackathon</strong>. A One Health citizen science platform connecting ecosystem monitoring, biodiversity protection, and human well-being. Pilot area: Coimbra, Portugal. Demo data is simulated. Supports investigation planning; does not identify chemicals or certify water safety.</p></footer>
+    <footer className="landing-footer"><span className="footer-mark">StreamTrace<span>One Health · Coimbra field atlas</span></span><p className="landing-trust">Built for the <strong>OneAquaHealth IEEE Global Hackathon</strong>. A citizen science prototype for reviewed observations and useful next checks. Study area: Coimbra, Portugal. Demo data is simulated. Supports investigation planning; does not identify chemicals or certify water safety. <Link href="/docs">Read the project guide.</Link></p></footer>
   </main>;
 }

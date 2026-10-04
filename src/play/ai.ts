@@ -23,7 +23,6 @@ async function keyFor(endpoint:string,input:unknown) {
 }
 /** This client has no generic public request method and no persistence endpoints. */
 export class MissionAI {
-  private cache=new Map<string,unknown>();
   private pending=new Map<string,Promise<unknown>>();
   private controllers=new Set<AbortController>();
   private generation=0;
@@ -34,10 +33,6 @@ export class MissionAI {
     const generation=this.generation, key=await keyFor(endpoint,input);
     if(generation!==this.generation) throw new DOMException("Cancelled","AbortError");
     if(!regenerate){
-      let cached=this.cache.get(key);
-      if(!cached)try{cached=JSON.parse(sessionStorage.getItem(key)??"null");}catch{/* Memory cache still works. */}
-      const parsed=schema.safeParse(cached);
-      if(parsed.success && valid(parsed.data)){this.cache.set(key,parsed.data);return parsed.data;}
       const pending=this.pending.get(key);if(pending)return pending as Promise<T>;
     }
     const controller=new AbortController();this.controllers.add(controller);
@@ -54,7 +49,7 @@ export class MissionAI {
       finally{clearTimeout(timer!);this.controllers.delete(controller);}
       if(generation!==this.generation)throw new DOMException("Cancelled","AbortError");
       // A superseded regeneration cannot overwrite the new cache entry.
-      if(this.pending.get(key)===job){this.cache.set(key,response);try{sessionStorage.setItem(key,JSON.stringify(response));}catch{/* Storage may be blocked. */}}
+      if(this.pending.get(key)===job){}
       return response;
     })();
     this.pending.set(key,job);

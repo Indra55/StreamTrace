@@ -149,16 +149,12 @@
 
 .opening-scene { text-align: center; padding: 60px 0 80px; }
 
-.foam-field { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-.foam-field canvas { display: block; width: 100%; height: 100%; }
-.foam-still {
-  position: absolute;
-  inset: 55% 0 0;
-  background:
-    radial-gradient(circle at 15% 90%, rgba(255,255,255,0.45) 0 8%, transparent 8.2%),
-    radial-gradient(circle at 80% 100%, rgba(217,220,212,0.22) 0 15%, transparent 15.2%),
-    radial-gradient(ellipse at 50% 95%, rgba(36,91,131,0.035) 0 30%, transparent 30%);
-}
+.opening-bubbles { position: fixed; inset: 0; z-index: 20; pointer-events: none; overflow: hidden; }
+.bubble-canvas { display: block; width: 100%; height: 100%; }
+.mission-story > .mission-header, .mission-story > .mission-disclosure-line,
+.mission-story > .mission-footer, .mission-story > .mission-fineprint { transition: filter .25s, opacity .25s; }
+.mission-story:has(.opening-scene[data-revealed=false]) > :is(.mission-header, .mission-disclosure-line, .mission-footer, .mission-fineprint) { filter: blur(5px); opacity: .55; }
+@media (prefers-reduced-motion: reduce) { .opening-bubbles { display: none; } }
 
 .opening-copy { position: relative; z-index: 1; max-width: 1100px; margin: auto; }
 
@@ -173,22 +169,51 @@
   margin-bottom: 32px;
 }
 
-/* Headline typography — Instrument Serif for editorial gravitas */
+/* Headline typography — JetBrains Mono and Roboto for a cool aesthetic */
 .mission .opening-copy h1,
 .mission .process-scene h1 {
-  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  font-size: clamp(46px, 6vw, 98px);
-  line-height: 1.05;
-  font-weight: 400;
-  letter-spacing: -0.055em;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(38px, 5.2vw, 84px);
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.06em;
 }
 .mission .opening-copy h1 em,
 .mission .process-scene h1 em {
-  font-family: 'Instrument Serif', Georgia, serif;
+  font-family: 'Roboto', sans-serif;
   font-style: italic;
   font-weight: 400;
   color: var(--river);
 }
+
+/* Scribbled highlighter effect */
+.highlight-scribble {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  z-index: 1;
+}
+.scribble-svg {
+  position: absolute;
+  bottom: 0.1em;
+  left: -4%;
+  width: 108%;
+  height: 0.9em;
+  z-index: -1;
+  color: rgba(255, 210, 50, 0.85); /* Vibrant highlighter yellow */
+  mix-blend-mode: multiply;
+  clip-path: inset(0 100% 0 0);
+}
+#opening[data-revealed="true"] .scribble-svg {
+  animation: scribble-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 0.5s;
+}
+@keyframes scribble-draw {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 
 /* Word-reveal elements and line breaks */
 .h1-line { display: block; }
@@ -368,6 +393,20 @@
 .mission-fineprint p { margin: 4px 0; }
 
 /* ─── Workspace chapter layout ─── */
+.mission-chapter-intro { display: flex; flex-direction: column; }
+.chapter-intro { flex: 1; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(40px, 7vw, 120px); align-items: center; width: 100%; max-width: 1320px; margin: 0 auto; padding: 100px 0 120px; }
+.chapter-intro-name h1 { font: 400 clamp(48px, 6vw, 94px)/1.05 'Instrument Serif', Georgia, serif; letter-spacing: -.045em; max-width: 750px; }
+.chapter-intro-name .story-kicker { color: var(--river); }
+.chapter-intro-summary { border-left: 1px solid var(--line); padding: 18px 0 18px 40px; }
+.chapter-intro-summary .story-kicker { margin-bottom: 20px; }
+.chapter-intro-summary > p { font-size: clamp(16px, 1.25vw, 20px); font-weight: 400; line-height: 1.75; max-width: 440px; }
+.chapter-intro-cue { display: grid; gap: 8px; margin-top: 32px; }
+.chapter-intro-cue span { color: var(--muted); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.chapter-intro-cue strong { font-size: 12px; font-weight: 500; }
+.mission-activity .mission-title { margin: 30px auto 24px; }
+.mission-activity .mission-title h1 { font-size: clamp(28px, 3vw, 42px); }
+.mission-activity .mission-title .story-kicker { margin-bottom: 10px; }
+.mission-activity .mission-count strong { font-size: 46px; }
 .mission-title {
   max-width: 1320px;
   margin: 60px auto 34px;
@@ -548,6 +587,34 @@
   border-radius: 10px;
   padding: 14px;
 }
+.mission-review-heading .story-kicker { margin-bottom: 8px; }
+.mission-review-heading h2 { font: 400 30px/1.2 'Instrument Serif', Georgia, serif; letter-spacing: -.02em; }
+.mission-review-heading > p { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
+.mission-review .evidence { padding: 22px 0 0; }
+.mission-review .evidence-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.mission-review .review-tag { margin-left: auto; }
+.mission-review .evidence-provenance { font-size: 10px; margin: 12px 0; }
+.mission-review .review-observation { font-size: 22px; margin: 16px 0; padding: 14px 18px; }
+.mission-review .review-context-details { margin: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.mission-review .review-context-toggle { display: flex; justify-content: space-between; align-items: center; width: 100%; text-align: left; background: transparent; border: 0; padding: 12px 0; font-size: 12px; }
+.mission-review .review-context-toggle span { font-size: 18px; }
+.mission-review .review-context-details dl { margin: 0 0 14px; gap: 12px; }
+.mission-review .review-guidance { margin: 16px 0; padding: 14px 16px; border-radius: 10px; font-size: 12px; line-height: 1.6; background: #eaf0ee; }
+.mission-review .review-guidance.is-uncertain, .mission-uncertain-note { background: #f0eadb; }
+.mission-review .review-checks { margin: 16px 0 22px; }
+.mission-review .review-checks label { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; line-height: 1.6; }
+.mission-review .review-checks input { margin-top: 4px; }
+.mission-review .evidence-assumptions { font-size: 11px; color: var(--muted); }
+.mission-review .evidence-assumptions summary { cursor: pointer; padding: 6px 0; }
+.mission-review .review-actions { border-top: 1px solid var(--line); padding-top: 18px; gap: 8px; }
+.mission-review .review-actions button { padding: 10px 16px; font-size: 12px; }
+.mission-review .review-actions button[data-primary=true] { background: var(--river); color: var(--paper); border-color: var(--river); }
+.mission-review .review-actions button[data-primary=true]:disabled { opacity: .45; }
+.review-conflict-example { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: 11px; }
+.review-conflict-example summary { cursor: pointer; }
+.review-conflict-example p { margin: 12px 0; }
+.review-conflict-example button { font-size: 11px; }
+.mission-uncertain-note { padding: 12px 14px; border-radius: 10px; font-size: 11px; margin: 0; }
 .mission-sites { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
 .mission-sites button { border-radius: 10px; }
 
@@ -581,14 +648,34 @@
   font-size: 11px;
 }
 
-.mission-messages { display: grid; gap: 15px; margin: 25px 0; }
-.mission-messages article {
-  border-top: 1px solid var(--line);
-  padding: 16px 0;
-  font-size: 13px;
-}
-.mission-messages article span { float: right; font-size: 10px; color: var(--muted); }
-.mission-messages article p { margin-top: 10px; }
+.mission-workspace.chapter-6 { max-width: 1320px; }
+.mission-outreach .mission-title { margin: 32px auto 20px; }
+.mission-outreach .mission-title h1 { font-size: clamp(32px, 3.4vw, 48px); }
+.mission-outreach .mission-caption { margin-top: 10px; }
+.mission-outreach .mission-footer { margin-top: 24px; }
+.chapter-6 .mission-device { background: transparent; border: 0; box-shadow: none; padding: 0; backdrop-filter: none; }
+.chapter-6 .device-bar { display: none; }
+.chapter-6 .mission-disclosure { padding: 0; margin: 0 0 12px; }
+.chapter-6 .ai-badge { margin: 12px 0 0; }
+.outreach-preview { display: grid; grid-template-columns: minmax(250px, .8fr) minmax(0, 1.8fr); gap: 32px; align-items: center; margin-top: 14px; }
+.outreach-summary .story-kicker { margin-bottom: 18px; }
+.outreach-summary h2 { font: 400 clamp(30px, 3vw, 44px)/1.1 'Instrument Serif', Georgia, serif; letter-spacing: -.025em; }
+.outreach-summary p { font-size: 12px; margin: 16px 0; }
+.outreach-status { display: flex; align-items: center; gap: 8px; color: var(--river); font-size: 10px; }
+.outreach-status > span { font-size: 18px; letter-spacing: -5px; padding-right: 5px; }
+.outreach-summary .outreach-review-note { color: var(--muted); font-size: 11px; border-top: 1px solid var(--line); padding-top: 16px; }
+.outreach-task-text { margin: 18px 0; font-size: 12px; }
+.outreach-task-text summary { cursor: pointer; }
+.outreach-form-link { display: inline-flex; gap: 22px; align-items: center; color: var(--river); font-size: 12px; text-underline-offset: 5px; padding: 8px 0; }
+.outreach-conversations { min-width: 0; width: 100%; max-width: 750px; margin: 0; justify-self: end; }
+.outreach-swipe-hint { display: none; }
+.outreach-image-wrap { position: relative; }
+.outreach-image-wrap img { display: block; width: 100%; height: auto; border-radius: 16px; }
+.outreach-conversations figcaption { color: var(--muted); font-size: 10px; text-align: center; margin-top: 10px; }
+.outreach-hotspot { position: absolute; border-radius: 8px; transition: box-shadow .2s; }
+.outreach-hotspot:hover { box-shadow: 0 0 0 3px rgba(36, 91, 131, .5); }
+.outreach-whatsapp-link { left: 23%; top: 43%; width: 23%; height: 12%; }
+.outreach-sms-link { left: 59.5%; top: 44%; width: 23.5%; height: 10%; }
 
 /* Case file */
 .mission-case h2, .mission-case h3 {
@@ -609,15 +696,39 @@
 }
 .mission-case p { font-size: 12px; }
 
-/* Future work */
-.mission #next li { margin: 20px 0; font-size: 14px; }
-.mission #next li strong {
+/* Impact Section */
+.mission-impact h2 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: clamp(32px, 4vw, 56px);
+  margin: 8px 0 24px;
+}
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin: 32px 0 40px;
+}
+.impact-grid article {
+  background: rgba(253, 252, 247, 0.65);
+  border: 1px solid rgba(217, 220, 212, 0.6);
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(36, 52, 59, 0.04);
+}
+.impact-grid strong {
   display: block;
-  font-size: 10px;
-  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--river);
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.impact-grid p {
+  font-size: 13px;
+  line-height: 1.6;
   color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  margin: 0;
 }
 
 /* ─── Recording mode ─── */
@@ -646,6 +757,10 @@
   .mission-edition { font-size: 8px; letter-spacing: 0.08em; }
   .mission-navigation { gap: 3px; }
   .mission-disclosure-line { font-size: 9px; max-width: 280px; }
+  .chapter-intro { grid-template-columns: minmax(0, 1fr); gap: 36px; padding: 64px 0 70px; }
+  .chapter-intro-name h1 { font-size: clamp(44px, 12vw, 66px); }
+  .chapter-intro-summary { border-left: 0; border-top: 1px solid var(--line); padding: 28px 0 0; }
+  .chapter-intro-summary > p { font-size: 16px; }
   .story-stage { min-height: 480px; }
   .opening-scene { padding: 45px 0; }
   .story-kicker { font-size: 8px; letter-spacing: 0.16em; margin-bottom: 25px; }
@@ -677,6 +792,11 @@
   .mission-workspace:has(.mission-map) { grid-template-columns: 1fr; }
   .mission-device { padding: 20px; border-radius: 14px; }
   .mission-phone { padding: 20px 15px; border-radius: 26px; }
+  .outreach-preview { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .outreach-conversations { grid-row: 1; overflow-x: auto; padding: 4px; }
+  .outreach-swipe-hint { display: inline; }
+  .outreach-image-wrap { min-width: 650px; }
+  .outreach-conversations figcaption { text-align: left; max-width: 290px; }
   .mission .leaflet-host { height: 320px; }
 }
 
