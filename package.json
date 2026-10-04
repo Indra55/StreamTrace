@@ -8,6 +8,7 @@
     "benchmark": "node --experimental-strip-types benchmarks/run.ts",
     "test:rls": "node --experimental-strip-types scripts/test-rls.ts",
     "geojson": "node --experimental-strip-types scripts/to-geojson.ts",
+    "fhir:sample": "node --experimental-strip-types scripts/make-fhir-sample.ts",
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",

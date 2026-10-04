@@ -71,17 +71,20 @@ test("transaction-scoped roles and JWT claims reset on success and rollback", as
 test("FHIR R4 collection has unique URLs, required fields and resolving Location focus", async () => {
   const f=await fixture(),cookie=await f.cookie();
   await f.post("/api/reports",f.payload);
+  await f.post("/api/reviews",{report_id:f.reportId,state:"approved",assumptions_acknowledged:true,absence_comparable:true,approval_reason:"Checked this on site"},cookie);
   const response=await f.app.request(`/api/cases/${f.caseId}/export?format=fhir`,{headers:{Cookie:cookie}});
   assert.equal(response.status,200); assert.equal(response.headers.get("content-type"),"application/fhir+json");
   const bundle=await response.json();
+  const meta=z.object({tag:z.array(z.object({system:z.literal("https://streamtrace.example/tags"),code:z.literal("simulated"),display:z.string()}))});
   const resource=z.discriminatedUnion("resourceType",[
-    z.object({resourceType:z.literal("Location"),id:z.string(),status:z.literal("active"),mode:z.literal("instance"),name:z.string(),description:z.string()}).strict(),
-    z.object({resourceType:z.literal("Observation"),id:z.uuid(),status:z.literal("preliminary"),code:z.object({text:z.string()}),focus:z.array(z.object({reference:z.string()})).min(1),effectiveDateTime:z.iso.datetime(),valueCodeableConcept:z.object({text:z.string()}),note:z.array(z.object({text:z.string()}))}).strict(),
+    z.object({resourceType:z.literal("Location"),id:z.string(),status:z.literal("active"),mode:z.literal("instance"),name:z.string(),description:z.string(),meta,identifier:z.array(z.object({system:z.literal("https://streamtrace.example/sites"),value:z.string()}))}).strict(),
+    z.object({resourceType:z.literal("Observation"),id:z.uuid(),status:z.literal("final"),meta,code:z.object({text:z.string()}).strict(),focus:z.array(z.object({reference:z.string()})).min(1),effectiveDateTime:z.iso.datetime(),valueCodeableConcept:z.object({text:z.enum(["seen","not seen","cannot tell"])}).strict(),note:z.array(z.object({text:z.string()}))}).strict(),
   ]);
-  z.object({resourceType:z.literal("Bundle"),type:z.literal("collection"),entry:z.array(z.object({fullUrl:z.string().regex(/^urn:uuid:/),resource})).min(2)}).strict().parse(bundle);
+  z.object({resourceType:z.literal("Bundle"),type:z.literal("collection"),meta,entry:z.array(z.object({fullUrl:z.string().regex(/^urn:uuid:/),resource})).min(2)}).strict().parse(bundle);
+  assert.equal(bundle.entry.filter((e:{resource:{resourceType:string}})=>e.resource.resourceType==="Observation").length,1);
   assert.equal(new Set(bundle.entry.map((e:{fullUrl:string})=>e.fullUrl)).size,bundle.entry.length);
   for(const e of bundle.entry) {
-    assert.equal(e.resource.meta,undefined);
+    assert.equal(e.resource.meta.tag[0].code,"simulated");
     if(e.resource.resourceType==="Observation") assert.ok(bundle.entry.some((location:typeof e)=> location.resource.resourceType==="Location" && location.fullUrl===e.resource.focus[0].reference));
   }
 });

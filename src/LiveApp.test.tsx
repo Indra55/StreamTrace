@@ -6,7 +6,7 @@ import { emptyAssumptions } from "../shared/observations.ts";
 import { network } from "./demo.ts";
 const caseId="10000000-0000-4000-8000-000000000001",reportId="20000000-0000-4000-8000-000000000001";
 beforeEach(()=>history.replaceState(null,"","/review"));
-function backend(options:{authenticated?:boolean;empty?:boolean;failedReview?:boolean;failedSubmission?:boolean;pendingReport?:boolean;seen?:boolean;known?:boolean;inbox?:boolean}={}) {
+function backend(options:{authenticated?:boolean;empty?:boolean;failedReview?:boolean;failedSubmission?:boolean;failedExport?:boolean;pendingReport?:boolean;seen?:boolean;known?:boolean;inbox?:boolean}={}) {
   let authenticated=options.authenticated ?? true;
   let candidates=network.reaches.slice(0,7).map(r=>r.id);
   let state=options.pendingReport ? "unreviewed" : "approved",revision=1,submitAttempts=0;
@@ -21,6 +21,7 @@ function backend(options:{authenticated?:boolean;empty?:boolean;failedReview?:bo
     if(!authenticated) return Response.json({error:"Authentication required"},{status:401});
     if(path==="/api/reviewer/cases") return Response.json(options.empty ? [] : [investigationCase]);
     if(path==="/api/reviewer/queue") return Response.json([...(state==="unreviewed" ? [{case_id:caseId}] : []),...(options.inbox ? [{id:"30000000-0000-4000-8000-000000000001",case_id:null,signal:"other",site_code:null,value:"cannot_tell",notes:"A blocked public path",observed_at:"2026-10-04T00:00:00Z"}] : [])]);
+    if(path.endsWith("/export?format=fhir")) return options.failedExport ? Response.json({error:"Service unavailable"},{status:500}) : Response.json({resourceType:"Bundle",type:"collection",entry:[]});
     if(path.includes("/export?format=")) return Response.json({case:investigationCase,graph:network,reports,
       decisions:[{report_id:reportId,revision,state,assumptions_acknowledged:state==="approved",absence_comparable:state==="approved"}],
       events:[{report_id:reportId,revision,state,created_at:"2026-10-04T00:00:00Z"}],
@@ -39,6 +40,37 @@ function backend(options:{authenticated?:boolean;empty?:boolean;failedReview?:bo
   });
   vi.stubGlobal("fetch",fetch);return {calls,fetch};
 }
+test("FHIR export downloads the API bundle with keyboard activation",async()=>{
+  const b=backend();render(<App/>);const user=userEvent.setup();
+  await user.click(await screen.findByRole("tab",{name:"Case"}));
+  const button=await screen.findByRole("button",{name:"Download FHIR bundle (prototype)"});
+  expect(screen.getByRole("button",{name:"Export JSON"}).parentElement).toBe(button.parentElement);
+  const help=screen.getByText("Prototype FHIR R4 collection Bundle. Base R4, no profile conformance claimed. Validate before external use.");
+  expect(button.getAttribute("aria-describedby")).toBe(help.id);
+  let file:Blob|undefined;
+  const createObjectURL=vi.fn((blob:Blob)=>{file=blob;return "blob:fhir-download";});
+  vi.stubGlobal("URL",class extends URL {static createObjectURL=createObjectURL;static revokeObjectURL=vi.fn();});
+  const downloads:{name:string;href:string}[]=[];
+  vi.spyOn(HTMLAnchorElement.prototype,"click").mockImplementation(function(this:HTMLAnchorElement){downloads.push({name:this.download,href:this.href});});
+  button.focus();expect(document.activeElement).toBe(button);
+  await user.keyboard("{Enter}");
+  await waitFor(()=>expect(downloads).toEqual([{name:`fhir-bundle-${caseId}.json`,href:"blob:fhir-download"}]));
+  expect(b.calls.find(c=>c.path===`/api/cases/${caseId}/export?format=fhir`)?.options.credentials).toBe("include");
+  expect(file?.type).toBe("application/fhir+json");
+  const contents=await new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=reject;reader.readAsText(file!);});
+  expect(JSON.parse(contents)).toEqual({resourceType:"Bundle",type:"collection",entry:[]});
+  expect((button as HTMLButtonElement).disabled).toBe(false);
+});
+test("FHIR download failure shows an accessible error and allows retry",async()=>{
+  backend({failedExport:true});render(<App/>);const user=userEvent.setup();
+  await user.click(await screen.findByRole("tab",{name:"Case"}));
+  const button=await screen.findByRole("button",{name:"Download FHIR bundle (prototype)"});
+  const click=vi.spyOn(HTMLAnchorElement.prototype,"click").mockImplementation(()=>{});
+  await user.click(button);
+  expect((await screen.findByRole("alert")).textContent).toBe("FHIR bundle download failed. Service unavailable");
+  expect(click).not.toHaveBeenCalled();expect((button as HTMLButtonElement).disabled).toBe(false);
+  expect(screen.getByTestId("candidate-count").textContent).toBe("7");
+});
 test("default app requires backend login and never loads the in-memory demo",async()=>{
   const b=backend({authenticated:false});render(<App/>);
   expect(await screen.findByRole("button",{name:"Sign in"})).toBeTruthy();

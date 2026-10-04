@@ -1,0 +1,419 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "meta": {
+    "tag": [
+      {
+        "system": "https://streamtrace.example/tags",
+        "code": "simulated",
+        "display": "Simulated StreamTrace demo data. No personal data."
+      }
+    ]
+  },
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000001",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-1",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "001"
+          }
+        ],
+        "name": "StreamTrace site 001 (simulated)",
+        "description": "Simulated observation site. Reach osm-10221406521-10221406543-545ebd4c17. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3696885,
+          "latitude": 40.1975766
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000002",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-2",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "002"
+          }
+        ],
+        "name": "StreamTrace site 002 (simulated)",
+        "description": "Simulated observation site. Reach osm-10570263986-10221430596-a3d3c505cc. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3688321,
+          "latitude": 40.1986569
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000003",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-3",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "003"
+          }
+        ],
+        "name": "StreamTrace site 003 (simulated)",
+        "description": "Simulated observation site. Reach osm-10309165347-10309165361-4f44729b43. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3669041,
+          "latitude": 40.203859
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000004",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-4",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "004"
+          }
+        ],
+        "name": "StreamTrace site 004 (simulated)",
+        "description": "Simulated observation site. Reach osm-10309165363-10309165372-b948c4743d. Physical access requires verification.",
+        "position": {
+          "longitude": -8.37435,
+          "latitude": 40.1980409
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000005",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-5",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "005"
+          }
+        ],
+        "name": "StreamTrace site 005 (simulated)",
+        "description": "Simulated observation site. Reach osm-10309165374-10309165385-2ad0a20494. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3855509,
+          "latitude": 40.1907306
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000006",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-6",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "006"
+          }
+        ],
+        "name": "StreamTrace site 006 (simulated)",
+        "description": "Simulated observation site. Reach osm-10570263955-10570263971-02a014a7a1. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3536975,
+          "latitude": 40.2049638
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000007",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-7",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "007"
+          }
+        ],
+        "name": "StreamTrace site 007 (simulated)",
+        "description": "Simulated observation site. Reach osm-10570263972-251615192-231288b021. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3549515,
+          "latitude": 40.2049991
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000008",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-8",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "008"
+          }
+        ],
+        "name": "StreamTrace site 008 (simulated)",
+        "description": "Simulated observation site. Reach osm-8414686398-8414686362-f51df2e704. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3603774,
+          "latitude": 40.2050689
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000009",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-9",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "009"
+          }
+        ],
+        "name": "StreamTrace site 009 (simulated)",
+        "description": "Simulated observation site. Reach osm-8414686363-251615198-f0d664e8dc. Physical access requires verification.",
+        "position": {
+          "longitude": -8.361458,
+          "latitude": 40.2047164
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000010",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-10",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "010"
+          }
+        ],
+        "name": "StreamTrace site 010 (simulated)",
+        "description": "Simulated observation site. Reach osm-251615210-251615211-ce1e9bedc0. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3696925,
+          "latitude": 40.1983923
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:00000000-0000-4000-8000-000000000011",
+      "resource": {
+        "resourceType": "Location",
+        "id": "site-11",
+        "status": "active",
+        "mode": "instance",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://streamtrace.example/sites",
+            "value": "011"
+          }
+        ],
+        "name": "StreamTrace site 011 (simulated)",
+        "description": "Simulated observation site. Reach osm-251615232-251615233-688d6fc11f. Physical access requires verification.",
+        "position": {
+          "longitude": -8.3870602,
+          "latitude": 40.1908363
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:20000000-0000-4000-8000-000000000001",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "20000000-0000-4000-8000-000000000001",
+        "status": "final",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "code": {
+          "text": "Reported observable signal: foam"
+        },
+        "focus": [
+          {
+            "reference": "urn:uuid:00000000-0000-4000-8000-000000000008"
+          }
+        ],
+        "effectiveDateTime": "2026-10-04T00:00:00.000Z",
+        "valueCodeableConcept": {
+          "text": "not seen"
+        },
+        "note": [
+          {
+            "text": "Simulated observation. Review state: approved. This is not a water safety assessment."
+          },
+          {
+            "text": "Simulated reviewer accepted this demo observation under the case assumptions."
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:20000000-0000-4000-8000-000000000002",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "20000000-0000-4000-8000-000000000002",
+        "status": "final",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://streamtrace.example/tags",
+              "code": "simulated",
+              "display": "Simulated StreamTrace demo data. No personal data."
+            }
+          ]
+        },
+        "code": {
+          "text": "Reported observable signal: foam"
+        },
+        "focus": [
+          {
+            "reference": "urn:uuid:00000000-0000-4000-8000-000000000010"
+          }
+        ],
+        "effectiveDateTime": "2026-10-04T00:00:00.000Z",
+        "valueCodeableConcept": {
+          "text": "seen"
+        },
+        "note": [
+          {
+            "text": "Simulated observation. Review state: approved. This is not a water safety assessment."
+          },
+          {
+            "text": "Simulated reviewer accepted this demo observation under the case assumptions."
+          }
+        ]
+      }
+    }
+  ]
+}

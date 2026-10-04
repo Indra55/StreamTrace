@@ -47,6 +47,7 @@ interface LiveControls {
   signal: string;
   pending: boolean;
   error: string;
+  exportError: string;
   onDraft: (text: string) => Promise<{ value: Value; confidence: number } | null>;
   onExport: (format: "json" | "fhir") => Promise<void>;
 }
@@ -390,7 +391,11 @@ export function Atlas({ data, initialView = "Map", state, result, dispatch, live
               Load conflicting evidence
             </button>
           </div>}
-          {live && <div className="demo-actions"><button disabled={live.pending} onClick={()=>void live.onExport("json")}>Export JSON</button><button disabled={live.pending} onClick={()=>void live.onExport("fhir")}>Export FHIR</button></div>}
+          {live && <>
+            <div className="demo-actions"><button disabled={live.pending} onClick={()=>void live.onExport("json")}>Export JSON</button><button disabled={live.pending} aria-describedby="fhir-export-help" onClick={()=>void live.onExport("fhir")}>Download FHIR bundle (prototype)</button></div>
+            <p id="fhir-export-help" className="claim">Prototype FHIR R4 collection Bundle. Base R4, no profile conformance claimed. Validate before external use.</p>
+            {live.exportError && <p className="api-error" role="alert">{live.exportError}</p>}
+          </>}
           <details className="history">
             <summary>
               Evidence history <span>{state.history.length} changes</span>

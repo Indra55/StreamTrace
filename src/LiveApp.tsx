@@ -15,6 +15,7 @@ export default function LiveApp({loginOnly=false}:{loginOnly?:boolean}) {
   const [selected,setSelected]=useState(""),[snapshot,setSnapshot]=useState<Snapshot|null>(null);
   const [pending,setPending]=useState(false),[initializing,setInitializing]=useState(!loginOnly);
   const [error,setError]=useState(""),[before,setBefore]=useState(0),[queueCount,setQueueCount]=useState(0);
+  const [exportError,setExportError]=useState("");
   const [email,setEmail]=useState(""),[password,setPassword]=useState("");
   const current=useRef<Snapshot|null>(null),generation=useRef(0),busy=useRef(false);
   current.current=snapshot;
@@ -30,7 +31,7 @@ export default function LiveApp({loginOnly=false}:{loginOnly?:boolean}) {
     const parsedQueue=parseQueue(queue),count=parsedQueue.rows.filter(r=>r.case_id===id).length;
     if(version!==generation.current || signal?.aborted) return;
     setBefore(current.current?.case.id===id ? current.current.analysis.candidates.length : parsed.graph.reaches.length);
-    setSnapshot(parsed);setInbox(parsedQueue.inbox);setQueueCount(count);setSelected(id);setError("");
+    setSnapshot(parsed);setInbox(parsedQueue.inbox);setQueueCount(count);setSelected(id);setError("");setExportError("");
   }
   async function discover(signal?:AbortSignal) {
     const rows=casesSchema.parse(await request<unknown>("/api/reviewer/cases",{signal})).filter(c=>!c.simulated);
@@ -95,19 +96,24 @@ export default function LiveApp({loginOnly=false}:{loginOnly?:boolean}) {
     catch{return null;}
   }
   async function download(format:"json"|"fhir") {
-    if(!selected)return;
+    if(!selected || busy.current)return;
+    busy.current=true;setPending(true);setExportError("");
     try {
       const payload=await request<unknown>(`/api/cases/${selected}/export?format=${format}`);
       const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:format==="fhir" ? "application/fhir+json" : "application/json"}));
-      const link=document.createElement("a");link.href=url;link.download=`streamtrace-${selected}.${format==="fhir" ? "fhir.json" : "json"}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-    } catch(e) {if(e instanceof ApiError && [401,403].includes(e.status))expire();setError(e instanceof Error ? e.message : "Export failed.");}
+      const link=document.createElement("a");link.href=url;link.download=format==="fhir" ? `fhir-bundle-${selected}.json` : `streamtrace-${selected}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    } catch(e) {
+      const message=`${format==="fhir" ? "FHIR bundle" : "JSON"} download failed. ${e instanceof Error ? e.message : "Try again."}`;
+      if(e instanceof ApiError && [401,403].includes(e.status)) {expire();setError(message);}
+      else setExportError(message);
+    } finally {busy.current=false;setPending(false);}
   }
   const controls=<section className="session-toolbar" aria-label="Reviewer session">
     <label>Case <select aria-label="Investigation case" value={selected} disabled={pending} onChange={e=>void refresh(e.target.value)}>{cases.map(c=><option key={c.id} value={c.id}>{caseTitle(c)}</option>)}</select></label>
     <span>{queueCount} pending reviews</span><Link href={`/task?mode=live&case=${encodeURIComponent(selected)}`}>Open field task</Link><button disabled={pending} onClick={()=>void refresh()}>Refresh case</button><button disabled={pending} onClick={()=>void signOut()}>Sign out</button>
   </section>;
   if(!loginOnly && authenticated && snapshot) return <Atlas data={snapshot.graph} state={viewState(snapshot,before)} result={serverAnalysis(snapshot)} dispatch={dispatch}
-    live={{inbox,header:controls,signal:snapshot.case.signal,pending,error,onDraft:draft,onExport:download}} />;
+    live={{inbox,header:controls,signal:snapshot.case.signal,pending,error,exportError,onDraft:draft,onExport:download}} />;
   return <main id="main-content" tabIndex={-1} className="connection-page">
     <p className="eyebrow">{loginOnly ? "Reviewer access" : "Reviewer area"}</p>
     <h1>{loginOnly ? "Reviewer sign in" : "Review reports"}</h1>

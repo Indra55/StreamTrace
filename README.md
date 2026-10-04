@@ -8,6 +8,8 @@ Someone notices foam in a stream. That tells us where the foam was seen, but the
 
 [Impact](#why-this-matters) · [How it works](#how-it-works) · [Evidence](#what-we-can-demonstrate) · [Try it](#try-it-locally) · [Technical reference](docs/technical-reference.md)
 
+Inspect the [simulated prototype FHIR bundle](docs/fhir/sample-bundle.json) and its [export and validation instructions](docs/fhir/README.md). Reviewers can download a bundle from the case panel next to the JSON export.
+
 ## Why this matters
 
 Field time is limited. Checking every stretch in order can spend that time on sites that tell an investigation very little. Community reports are useful, but a report needs context and review before it can guide a search.
